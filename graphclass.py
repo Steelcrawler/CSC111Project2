@@ -35,7 +35,7 @@ class _Vertex:
 
     def __init__(self, neighbours: set[_Vertex]) -> None:
         """Initialize a new vertex with the given item and neighbours."""
-        self.neighbours = {}
+        self.neighbours = {}h
 
 class Graph:
     """A graph.
@@ -94,7 +94,7 @@ class Graph:
         else:
             # We didn't find an existing vertex for both items.
             return False
-        
+
 class _Song_Graph(Graph):
     ''' A graph of attribute ranges, with neighbors of the attribute ranges being the songs
 
@@ -135,8 +135,8 @@ def create_Attribute_Vertices(num_splits: int, attribute: str) -> lst[_Attribute
         interval = str(round(i*1/num_splits, 2)) + '-' + str(round((i+1)*1/num_splits, 2))
         vertices.append(_Attribute_Vertex(attribute, interval))
     return vertices
-            
-        
+
+
 
 class _Song_Vertex(_Vertex):
     ''' A song vertex in a graph
@@ -148,8 +148,8 @@ class _Song_Vertex(_Vertex):
     def __init__(self, song_name: str, artist: str, song_id: str, neighbours: set[_Vertex]) -> None:
         super().__init__(neighbours)
         self.song_name = song_name
-        self.artist = artist    
-        self.song_id = song_id  
+        self.artist = artist
+        self.song_id = song_id
 
 
 class _Attribute_Vertex(_Vertex):
