@@ -1,24 +1,6 @@
-"""CSC111 Exercise 3: Graphs and Recommender Systems (Part 1)
-
-Module Description
-==================
-This module contains the _Vertex and Graph classes from lecture, along with some additional
-methods that you'll implement in this exercise.
-
-Copyright and Usage Information
-===============================
-
-This file is provided solely for the personal and private use of students
-taking CSC111 at the University of Toronto St. George campus. All forms of
-distribution of this code, whether as given or with any changes, are
-expressly prohibited. For more information on copyright for CSC111 materials,
-please consult our Course Syllabus.
-
-This file is Copyright (c) 2024 CSC111 Teaching Team
-"""
 from __future__ import annotations
 from typing import Any, Optional
-
+import csv
 
 class _Vertex:
     """A vertex in a graph.
@@ -97,6 +79,51 @@ class Graph:
             return False
 
 
+def get_num_splits(attribute: str) -> int:
+    ''' Return the number of splits for a given attribute
+    '''
+    if attribute == 'loudness':
+        return 5 # whisper, quiet, medium, loud, no eardrums
+    if attribute == 'tempo':
+        return 5 # snail, slow, medium, fast, cheetah
+    if attribute == 'speechiness':
+        return 3 # no talking, some talking, lots of talking
+    if attribute == 'valence':
+        return 4 # depression, slightly sad, slightly happy, happy
+    if attribute == 'energy':
+        return 4 # low energy, medium energy, high energy, hyperactive
+    if attribute == 'danceability':
+        return 4 # no dancing, some dancing, lots of dancing, hyperactive
+    if attribute == 'instrumentalness':
+        return 3 # no instruments, some instruments, all instruments
+
+
+def Create_Attribute_Vertices(veritces: dict, attribute: str, attribute_interval: tuple) -> None:
+    ''' Create a list of attribute vertices for a given attribute
+    '''
+    num_splits = get_num_splits(attribute)
+    start = attribute_interval[0]
+    end = attribute_interval[1]
+    for i in range(num_splits):
+        interval = str(round(i * (end - start) / num_splits, 2)) + '-' + str(round((i + 1) * (end - start)  / num_splits, 2))
+        veritces[(attribute, interval)] = _Attribute_Vertex(attribute, interval, set())
+
+def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
+    ''' Get the range in which a given value falls
+    >>> get_value_range(0.25, (0.0, 1.0), 4)
+    
+    '''
+    start, end = total_range
+    split_size = (end - start) / num_splits
+    for i in range(num_splits):
+        range_start = start + i * split_size
+        range_end = start + (i + 1) * split_size
+        if range_start <= value < range_end:
+            return f"{range_start}-{range_end}"
+    return f"{end}-{end + split_size}"  # for the case when value equals to the end of total range
+    
+
+
 class _Song_Graph(Graph):
     ''' A graph of attribute ranges, with neighbors of the attribute ranges being the songs
 
@@ -104,53 +131,44 @@ class _Song_Graph(Graph):
         - all(isinstance(self._vertices[item], _Attribute_Vertex) for item in self._vertices)
     '''
 
-    _vertices: dict[(str, str), _Vertex]
+    _vertices: dict[(str, str), _Vertex] # attribute, range for the vertex, and the vertex object itself
+    attributes: dict[str, tuple] # general attribute ranges of any song
 
     def __init__(self) -> None:
         super().__init__()
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('valence', interval)] = _Attribute_Vertex('valence', interval)
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('energy', interval)] = _Attribute_Vertex('energy', interval)
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('danceability', interval)] = _Attribute_Vertex('danceability', interval)
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('loudness', interval)] = _Attribute_Vertex('loudness', interval)
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('instrumentalness', interval)] = _Attribute_Vertex('instrumentalness', interval)
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('tempo', interval)] = _Attribute_Vertex('tempo', interval)
-        for i in range(0, 10):
-            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-            self._vertices[('speechiness', interval)] = _Attribute_Vertex('speechiness', interval)
+        self.attributes = {'valence': (0, 1), 'energy': (0, 1), 'danceability': (0, 1), 'loudness': (-60, 2),
+                      'instrumentalness': (0, 1), 'tempo': (0, 250), 'speechiness':(0, 1)}
+        for attribute in self.attributes:
+            Create_Attribute_Vertices(self._vertices, attribute, self.attributes[attribute])
+        
 
-        #Altenate initialisation- TARA
+    def add_song(self, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness, loudness):
+        ''' Add a song to the graph by creating edges between the song and the attribute vertices
+        '''
+        song_vertex = _Song_Vertex(track_name, track_id)
+        song_attributes = {'valence': valence, 'energy': energy, 'danceability': danceability, 
+                    'loudness': loudness, 'instrumentalness': instrumentalness, 
+                    'tempo': tempo, 'speechiness': speechiness}
 
-        # attributes = ['valence', 'energy', 'danceability', 'loudness',
-        #               'instrumentalness', 'tempo', 'speechiness']
-        # for attribute in attributes:
-        #     for i in range(10):
-        #         interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
-        #         self._vertices[(attribute, interval)] = _Attribute_Vertex(attribute, interval, set())
+        for attribute in self.attributes:
+            start, end = self.attributes[attribute]
+            num_splits = get_num_splits(attribute)
+            range_str = get_value_range(song_attributes[attribute], (start, end), num_splits)
+            song_vertex.add_edge(self._vertices[(attribute, range_str)])
+    
+    def read_csv_data(self, filename: str) -> None:
+        ''' Read a csv file of song data and add the songs to the graph
+        '''
+        with open(filename, 'r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip the header row
+            for row in reader:
+                track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness, loudness = row
+                self.add_song(track_name, track_id, float(valence), float(energy), 
+                              float(danceability), float(instrumentalness), float(tempo), 
+                              float(speechiness), float(loudness))
+    
 
-
-
-
-
-def Create_Attribute_Vertices(num_splits: int, attribute: str) -> list[_Attribute_Vertex]:
-    ''' Create a list of attribute vertices for a given attribute
-    '''
-    vertices = []
-    for i in range(0, num_splits):
-        interval = str(round(i * 1 / num_splits, 2)) + '-' + str(round((i + 1) * 1 / num_splits, 2))
-        vertices.append(_Attribute_Vertex(attribute, interval))
-    return vertices
 
 
 class _Song_Vertex(_Vertex):
