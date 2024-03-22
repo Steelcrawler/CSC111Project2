@@ -35,7 +35,7 @@ class _Vertex:
 
     def __init__(self, neighbours: set[_Vertex]) -> None:
         """Initialize a new vertex with the given item and neighbours."""
-        self.neighbours = {}h
+        self.neighbours = {}
 
 class Graph:
     """A graph.
