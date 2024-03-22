@@ -35,7 +35,8 @@ class _Vertex:
 
     def __init__(self, neighbours: set[_Vertex]) -> None:
         """Initialize a new vertex with the given item and neighbours."""
-        self.neighbours = {}
+        self.neighbours = neighbours
+
 
 class Graph:
     """A graph.
@@ -95,47 +96,61 @@ class Graph:
             # We didn't find an existing vertex for both items.
             return False
 
+
 class _Song_Graph(Graph):
     ''' A graph of attribute ranges, with neighbors of the attribute ranges being the songs
 
     Representation Invariants:
         - all(isinstance(self._vertices[item], _Attribute_Vertex) for item in self._vertices)
     '''
+
     _vertices: dict[(str, str), _Vertex]
 
     def __init__(self) -> None:
         super().__init__()
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('valence', interval)] = _Attribute_Vertex('valence', interval)
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('energy', interval)] = _Attribute_Vertex('energy', interval)
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('danceability', interval)] = _Attribute_Vertex('danceability', interval)
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('loudness', interval)] = _Attribute_Vertex('loudness', interval)
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('instrumentalness', interval)] = _Attribute_Vertex('instrumentalness', interval)
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('tempo', interval)] = _Attribute_Vertex('tempo', interval)
         for i in range(0, 10):
-            interval = str(round(i*0.1, 2)) + '-' + str(round((i+1)*0.1, 2))
+            interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
             self._vertices[('speechiness', interval)] = _Attribute_Vertex('speechiness', interval)
 
-def create_Attribute_Vertices(num_splits: int, attribute: str) -> lst[_Attribute_Vertex]:
+        #Altenate initialisation- TARA
+
+        # attributes = ['valence', 'energy', 'danceability', 'loudness',
+        #               'instrumentalness', 'tempo', 'speechiness']
+        # for attribute in attributes:
+        #     for i in range(10):
+        #         interval = str(round(i * 0.1, 2)) + '-' + str(round((i + 1) * 0.1, 2))
+        #         self._vertices[(attribute, interval)] = _Attribute_Vertex(attribute, interval, set())
+
+
+
+
+
+def Create_Attribute_Vertices(num_splits: int, attribute: str) -> list[_Attribute_Vertex]:
     ''' Create a list of attribute vertices for a given attribute
     '''
     vertices = []
     for i in range(0, num_splits):
-        interval = str(round(i*1/num_splits, 2)) + '-' + str(round((i+1)*1/num_splits, 2))
+        interval = str(round(i * 1 / num_splits, 2)) + '-' + str(round((i + 1) * 1 / num_splits, 2))
         vertices.append(_Attribute_Vertex(attribute, interval))
     return vertices
-
 
 
 class _Song_Vertex(_Vertex):
