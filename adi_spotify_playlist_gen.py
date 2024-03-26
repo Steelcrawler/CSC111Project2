@@ -7,7 +7,7 @@ client_secret = '8f38ae574af4484c91c0e95f412c4ffe'
 redirect_uri = 'http://localhost:8888/callback'
 
 # Authenticate the user and get an access token
-username = 'daprobestest' 
+username = input('What\'s your spotify username?')
 token = util.prompt_for_user_token(
     username=username,
     scope='playlist-modify-private playlist-modify-public', 
