@@ -4,10 +4,16 @@ from graphclass import _Song_Graph, _Song_Vertex
 
 def convert_range_string_to_tuple(range_string):
     range_split = range_string.split('-')
+    print(range_split)
     if len(range_split) == 2:  # Check if there are two parts in the split
         return (float(range_split[0]), float(range_split[1]))
-    else:
-        return None
+    elif len(range_split) == 4:# both numbers are negative
+        return (float(range_split[1])*-1, float(range_split[3])*-1)
+    elif len(range_split) == 3 and range_split[1]=='':# second number is neg
+        return (float(range_split[0]), float(range_split[2])*-1)
+    elif len(range_split) == 3 and range_split[0]=='':
+        return (float(range_split[1])*-1, float(range_split[2]))
+
 
 
 my_graph = _Song_Graph()
@@ -48,7 +54,7 @@ def create_3d_scatter(x_attribute, y_attribute, z_attribute):
         text=songs,  # Song names as hover text
         hoverinfo='text',
         marker=dict(
-            size=10,
+            size=1,
             opacity=0.8
         )
     )])
