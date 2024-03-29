@@ -83,7 +83,6 @@ class Graph:
 
 
 def get_num_splits(attribute: str) -> int:
-
     ''' Return the number of splits for a given attribute
     '''
     if attribute == 'loudness':
@@ -224,7 +223,7 @@ if __name__ == '__main__':
     my_graph = _Song_Graph()
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     for vertex in my_graph._vertices:
-        if vertex[0] == 'loudness':
+        if vertex[0] == 'valence':
             print(vertex[1])
     # -60.0--46.0
     # -46.0--32.0
