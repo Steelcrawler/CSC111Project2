@@ -1,34 +1,31 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import spotipy.util as util
 
-# Set up of the Spotify API credentials
-client_id = '59908f48513949c2a60ab7320c8b1bc5'
-client_secret = 'd2009d6c693848b5a5519f8af0e89738'
-redirect_uri = 'http://localhost:8080'  # You can set this to your desired redirect URI
+client_id = 'abacd94498c945af91633a3e85ed1fa1'
+client_secret = '8f38ae574af4484c91c0e95f412c4ffe'
+redirect_uri = 'http://localhost:8888/callback'
 
-# Create a SpotifyOAuth object
-sp_oauth = SpotifyOAuth(client_id = client_id, client_secret = client_secret, redirect_uri = redirect_uri, scope = 'playlist-modify-private')
+# Authenticate the user and get an access token
+username = input('What\'s your spotify username?')
+token = util.prompt_for_user_token(
+    username=username,
+    scope='playlist-modify-private playlist-modify-public',
+    client_id=client_id,
+    client_secret=client_secret,
+    redirect_uri="http://localhost:8888/callback"
+)
+spotify = spotipy.Spotify(auth=token)
+song_name = 'Bandit'  # replace with your song name
 
-# Get the authorization URL
-auth_url = sp_oauth.get_authorize_url()
+# # Create the playlist
+playlist_name = 'test_playlist'
+playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False, description='test playlist')
 
-# Ask the Spotify user to authorize the app and get the authorization code
-print("Please go to this URL and authorize access: {}".format(auth_url))
-auth_code = input("Enter the authorization code: ")
-
-# Get the access token
-token_info = sp_oauth.get_access_token(auth_code)
-access_token = token_info['access_token']
-
-# Create a Spotify object
-sp = spotipy.Spotify(auth = access_token)
-
-# Create a new playlist
-playlist_name = "Your Playlist Name"
-playlist_description = "Your Playlist Description"
-user_id = sp.current_user()['id']
-playlist = sp.user_playlist_create(user_id, playlist_name, public = False, description = playlist_description)
-
-# Print the created playlist details
-print("Playlist '{}' created successfully.".format(playlist_name))
-print("Playlist ID:", playlist['id'])
+# Search for the song
+results = spotify.search(q='track:' + song_name, type='track', limit=1)
+items = results['tracks']['items']
+if len(items) > 0:
+    track = items[0]
+    track_id = track['id']
+    spotify.playlist_add_items(playlist['id'], [track_id])
