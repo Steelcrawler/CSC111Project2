@@ -135,6 +135,8 @@ def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
             return f"{range_start}-{range_end}"
     return f"{end}-{end + split_size}"  # for the case when value equals to the end of total range
 
+# def reccomend_songs(valence: str, energy: str, danceablity: str, loudness: str, instrumentalness: str, tempo: str, speechiness: str) -> list:
+
 
 class _Song_Vertex(_Vertex):
     ''' A song vertex in a graph
@@ -142,12 +144,14 @@ class _Song_Vertex(_Vertex):
     song_name: str
     artist: str
     song_id: str
+    track_popularity: str
 
-    def __init__(self, song_name: str, song_id: str, neighbours: set[_Vertex], artist:str) -> None:
+    def __init__(self, song_name: str, song_id: str, neighbours: set[_Vertex], artist:str, track_popularity: str) -> None:
         super().__init__(neighbours)
         self.song_name = song_name
         self.artist = artist
         self.song_id = song_id
+        self.track_popularity = track_popularity
 
     def add_neighbor(self, vertex: _Vertex) -> None:
         ''' Add an edge between this song vertex and an attribute vertex
@@ -186,10 +190,10 @@ class _Song_Graph(Graph):
             Create_Attribute_Vertices(self._vertices, attribute, self.attributes[attribute])
 
     def add_song(self, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness,
-                 loudness, artist):
+                 loudness, artist, track_popularity):
         ''' Add a song to the graph by creating edges between the song and the attribute vertices
         '''
-        song_vertex = _Song_Vertex(track_name, track_id, set(), artist)
+        song_vertex = _Song_Vertex(track_name, track_id, set(), artist, track_popularity=track_popularity)
         song_attributes = {'valence': valence, 'energy': energy, 'danceability': danceability,
                            'loudness': loudness, 'instrumentalness': instrumentalness,
                            'tempo': tempo, 'speechiness': speechiness, 'artist':artist}
@@ -213,11 +217,19 @@ class _Song_Graph(Graph):
                 track_artist, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness, loudness, popularity = row
                 self.add_song(track_name, track_id, float(valence), float(energy),
                               float(danceability), float(instrumentalness), float(tempo),
-                              float(speechiness), float(loudness), track_artist)
+                              float(speechiness), float(loudness), track_artist, popularity)
 
 
 if __name__ == '__main__':
     my_graph = _Song_Graph()
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
-    for vertex in my_graph._vertices[('valence', '0.25-0.5')].neighbours:
-        print(vertex.song_name)
+    for vertex in my_graph._vertices:
+        if vertex[0] == 'loudness':
+            print(vertex[1])
+    # -60.0--46.0
+    # -46.0--32.0
+    # -32.0--18.0
+    # -18.0--4.0
+    # -4.0-10.0
+    # for vertex in my_graph._vertices[('loudness', '-32.0--18.0')].neighbours:
+    #     print(vertex.song_name)
