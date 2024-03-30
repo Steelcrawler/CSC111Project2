@@ -4,10 +4,9 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     graph = graphclass._Song_Graph()
+    graph.read_csv_data("cleaned_spotify_songs.csv")
     for attribute in {'danceability', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'tempo', 'valence'}:
-        graph.read_csv_data("cleaned_spotify_songs.csv")
         range_to_popularity = {}
-        attribute = 'danceability'
         range_to_count = {}
         for vertex in graph._vertices:
             if vertex[0] == attribute:
