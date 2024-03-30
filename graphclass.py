@@ -189,6 +189,32 @@ def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> 
     i = int(round((range_start - start) / split_size, 0))
     return i + 1
 
+def get_range_str_from_index(i: int, total_range: tuple, num_splits: int) -> str:
+    ''' Get the corresponding range string of a given index in the total range
+
+    >>> value_range(2, (0.0, 1.0), 4)
+    '0.25-0.5'
+    >>> value_range(1, (0.0, 1.0), 4)
+    '0.0-0.25'
+    >>> value_range(1, (0.0, 1.0), 10)
+    '0.0-0.1'
+    >>> value_range(2, (0.0, 1.0), 10)
+    '0.1-0.2'
+    >>> value_range(3, (0.0, 1.0), 10)
+    '0.2-0.3'
+    >>> value_range(4, (0.0, 1.0), 10)
+    '0.3-0.4'
+    >>> value_range(5, (0.0, 1.0), 10)
+    '0.4-0.5'
+    >>> value_range(10, (0.0, 1.0), 10)
+    '0.9-1.0'
+    '''
+    start, end = total_range
+    split_size = (end - start) / num_splits
+    range_start = round(start + split_size * (i - 1), 2)
+    range_end = round(range_start + split_size, 2)
+    return f'{range_start}-{range_end}'
+
 
 class _Song_Vertex(_Vertex):
     ''' A song vertex in a graph
