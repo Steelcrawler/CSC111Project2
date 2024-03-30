@@ -44,59 +44,59 @@ if __name__ == '__main__':
             y_values.append(key)
             z_values.append(0 if value is None or math.isnan(value) else value)
     
-    fig = go.Figure(data=go.Heatmap(
-        x=x_values,
-        y=y_values,
-        z=z_values,
-        colorscale='Jet',
-        colorbar=dict(
-        title='Popularity',
-    ),
-    ))
-
-    # Add labels to the axes
-    fig.update_layout(
-        title='Heatmap of Attributes',
-        xaxis_title='Attributes',
-        yaxis_title='Percentiles (measured in 10% increments)',
-        autosize=False,
-        width=500,
-        height=500,
-        margin=dict(l=65, r=50, b=65, t=90)
-    )
-
-    # Show the figure
-    fig.show()
-    pio.write_image(fig, 'heatmap.png')
-    
-
-    # # Create the 3D scatter plot
-    # fig = go.Figure(data=go.Scatter3d(
+    # fig = go.Figure(data=go.Heatmap(
     #     x=x_values,
     #     y=y_values,
     #     z=z_values,
-    #     mode='markers',
-    #     marker=dict(
-    #         size=3,
-    #         color=z_values,  # set color to an array/list of desired values
-    #         colorscale='Viridis',  # choose a colorscale
-    #         opacity=0.8
-    #     )
+    #     colorscale='Jet',
+    #     colorbar=dict(
+    #     title='Popularity',
+    # ),
     # ))
 
     # # Add labels to the axes
     # fig.update_layout(
-    #     title='3D Scatter Plot of Attributes',
-    #     scene=dict(
-    #         xaxis_title='Attributes',
-    #         yaxis_title='Percentile (in 10\% increments)',
-    #         zaxis_title='Popularity',
-    #     ),
+    #     title='Heatmap of Attributes',
+    #     xaxis_title='Attributes',
+    #     yaxis_title='Percentiles (measured in 10% increments)',
     #     autosize=False,
     #     width=500,
     #     height=500,
     #     margin=dict(l=65, r=50, b=65, t=90)
     # )
-    # fig.update_yaxes(categoryorder='category ascending')
+
     # # Show the figure
     # fig.show()
+    # pio.write_image(fig, 'heatmap.png')
+    
+
+    # Create the 3D scatter plot
+    fig = go.Figure(data=go.Scatter3d(
+        x=x_values,
+        y=y_values,
+        z=z_values,
+        mode='markers',
+        marker=dict(
+            size=3,
+            color=z_values,  # set color to an array/list of desired values
+            colorscale='Viridis',  # choose a colorscale
+            opacity=0.8
+        )
+    ))
+
+    # Add labels to the axes
+    fig.update_layout(
+        title='3D Scatter Plot of Attributes',
+        scene=dict(
+            xaxis_title='Attributes',
+            yaxis_title='Percentile (in 10% increments)',
+            zaxis_title='Popularity',
+        ),
+        autosize=False,
+        width=500,
+        height=500,
+        margin=dict(l=65, r=50, b=65, t=90)
+    )
+    fig.update_yaxes(categoryorder='category ascending')
+    # Show the figure
+    fig.show()
