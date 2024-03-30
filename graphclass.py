@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Optional
 import csv
+import math
 
 
 class _Vertex:
@@ -166,6 +167,18 @@ def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> 
     2
     >>> reverse_value_range('0.0-0.25', (0.0, 1.0), 4)
     1
+    >>> reverse_value_range('0.0-0.1', (0.0, 1.0), 10)
+    1
+    >>> reverse_value_range('0.1-1.2', (0.0, 1.0), 10)
+    2
+    >>> reverse_value_range('0.2-0.3', (0.0, 1.0), 10)
+    3
+    >>> reverse_value_range('0.3-0.4', (0.0, 1.0), 10)
+    4
+    >>> reverse_value_range('0.4-0.5', (0.0, 1.0), 10)
+    5
+    >>> reverse_value_range('0.9-1.0', (0.0, 1.0), 10)
+    10
     '''
     start, end = total_range
     if range_str.startswith('-'):
@@ -173,7 +186,7 @@ def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> 
     else:
         range_start = float(range_str.split('-', 1)[0])
     split_size = (end - start) / num_splits
-    i = int((range_start - start) / split_size)
+    i = int(round((range_start - start) / split_size, 0))
     return i + 1
 
 
