@@ -1,8 +1,7 @@
 import os
 
 from flask import Flask, jsonify, render_template, request
-from graphclass import get_range_str_from_index, get_num_splits, get_attribute_range
-
+import graphclass
 app = Flask(__name__)
 
 dropdown_options = {
@@ -21,13 +20,16 @@ dropdown_options = {
 @app.route('/')
 def index():
     global dropdown_options
-    # Define the dropdown options dynamically
 
     return render_template('index2.html', dropdown_options=dropdown_options)
 
 
-@app.route('/result', methods=['POST'])
-def result():
+# Map the keys to the parameter names of the recommend_songs method
+
+
+
+
+def dictionary_obtainer():
     selected_options = []
     dict_of_return = {}
     for i in range(1, 8):
@@ -49,11 +51,19 @@ def result():
     dict2=get_new(dropdown_options,dict_of_return)
     final_effing_thing={}
     for var in dict2:
-        final_effing_thing[var]=get_range_str_from_index(dict2[var], get_attribute_range(var), get_num_splits(var))
-        print(final_effing_thing)
+        final_effing_thing[var]=graphclass.get_range_str_from_index(dict2[var], graphclass.get_attribute_range(var), graphclass.get_num_splits(var))
 
     return final_effing_thing
 
+
+
+
+@app.route('/result', methods=['POST'])
+def result():
+    my_graph=graphclass._Song_Graph()
+    my_graph.read_csv_data('cleaned_spotify_songs.csv')
+    result_dictionary = dictionary_obtainer()
+    return my_graph.reccomend_songs(**result_dictionary)
 
 
 
@@ -61,4 +71,4 @@ def result():
 
 if __name__ == '__main__':
     # app.run(debug=True)
-    app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 8876)))
+    app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 9876)))
