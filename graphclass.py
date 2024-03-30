@@ -102,6 +102,9 @@ def get_num_splits(attribute: str) -> int:
         return 3  # no instruments, some instruments, all instruments
     
 def get_num_splits_stats(attribute: str) -> int:
+    ''' Returns the number of splits for a given attribute for the stats graph. This 
+    value is always 10 to make the data easy to read.
+    '''
     return 10
 
 def get_attribute_range(attribute: str) -> tuple:
@@ -156,6 +159,23 @@ def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
             return f"{range_start}-{range_end}"
     return f"{end}-{end + split_size}"  # for the case when value equals to the end of total range
 
+def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> int:
+    ''' Get the corresponding index of a given range string in the total range
+
+    >>> reverse_value_range('0.25-0.5', (0.0, 1.0), 4)
+    2
+    >>> reverse_value_range('0.0-0.25', (0.0, 1.0), 4)
+    1
+    '''
+    start, end = total_range
+    if range_str.startswith('-'):
+        range_start = float(range_str[1:].split('-', 1)[0]) * -1
+    else:
+        range_start = float(range_str.split('-', 1)[0])
+    split_size = (end - start) / num_splits
+    i = int((range_start - start) / split_size)
+    return i + 1
+
 
 class _Song_Vertex(_Vertex):
     ''' A song vertex in a graph
@@ -199,7 +219,7 @@ class _Song_Graph(Graph):
 
     _vertices: dict[(str, str), _Vertex]  # attribute, range for the vertex, and the vertex object itself
     attributes: dict[str, tuple]  # general attribute ranges of any song
-    testing: bool
+    key: callable
 
     def __init__(self, stats = False) -> None:
         super().__init__()
@@ -207,7 +227,10 @@ class _Song_Graph(Graph):
                            'danceability': get_attribute_range('danceability'), 'loudness': get_attribute_range('loudness'),
                            'instrumentalness': get_attribute_range('instrumentalness'), 'tempo': get_attribute_range('tempo'), 
                            'speechiness': get_attribute_range('speechiness')}
-        self.testing = stats
+        if stats:
+            self.key = get_num_splits_stats
+        else:
+            self.key = get_num_splits
         if stats:
             for attribute in self.attributes:
                 Create_Attribute_Vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits_stats)
@@ -216,7 +239,7 @@ class _Song_Graph(Graph):
                 Create_Attribute_Vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits)
 
     def add_song(self, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness,
-                 loudness, artist, track_popularity, key):
+                 loudness, artist, track_popularity):
         ''' Add a song to the graph by creating edges between the song and the attribute vertices
         '''
         song_vertex = _Song_Vertex(track_name, track_id, set(), artist, track_popularity=track_popularity)
@@ -226,7 +249,7 @@ class _Song_Graph(Graph):
 
         for attribute in self.attributes:
             start, end = self.attributes[attribute]
-            num_splits = key(attribute)
+            num_splits = self.key(attribute)
             range_str = get_value_range(song_attributes[attribute], (start, end), num_splits)
             if (attribute, range_str) not in self._vertices:
                 print(f"Attribute vertex {attribute} {range_str} not found")
@@ -236,10 +259,6 @@ class _Song_Graph(Graph):
     def read_csv_data(self, filename: str) -> None:
         ''' Read a csv file of song data and add the songs to the graph
         '''
-        if self.testing:
-            key = get_num_splits_stats
-        else:
-            key = get_num_splits
         with open(filename, 'r') as file:
             reader = csv.reader(file)
             next(reader)  # Skip the header row
@@ -247,7 +266,7 @@ class _Song_Graph(Graph):
                 track_artist, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness, loudness, popularity = row
                 self.add_song(track_name, track_id, float(valence), float(energy),
                               float(danceability), float(instrumentalness), float(tempo),
-                              float(speechiness), float(loudness), track_artist, popularity, key)
+                              float(speechiness), float(loudness), track_artist, popularity)
     
     def reccomend_songs(self, valence: Optional[str] = None, energy: Optional[str] = None, 
                         danceability: Optional[str] = None, loudness: Optional[str] = None, 
@@ -276,6 +295,7 @@ class _Song_Graph(Graph):
 
 if __name__ == '__main__':
     my_graph = _Song_Graph()
+    # my_graph = _Song_Graph(stats=True)
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     print(len(my_graph.reccomend_songs(valence='0.25-0.5', danceability='0.25-0.5')))
     # print(len(my_graph.reccomend_songs(valence='0.1-0.2', danceability='0.1-0.2')))
