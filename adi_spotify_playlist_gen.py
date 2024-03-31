@@ -28,7 +28,7 @@ def create_playlist(songs: list) -> None:
     )
     spotify = spotipy.Spotify(auth=token)
     playlist_name = 'Reccomended Playlist For You!'
-    playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False, description='test playlist'
+    playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False, description='Playlist generated using CSC111 project 2!'
                                             )
     for song in songs:
         results = spotify.search(q='track:' + song, type='track', limit=1)
@@ -77,17 +77,3 @@ if __name__ == '__main__':
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
-
-# song_name = 'Bandit'  # replace with your song name
-
-# # # Create the playlist
-# playlist_name = 'test_playlist'
-# playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False, description='test playlist')
-
-# # Search for the song
-# results = spotify.search(q='track:' + song_name, type='track', limit=1)
-# items = results['tracks']['items']
-# if len(items) > 0:
-#     track = items[0]
-#     track_id = track['id']
-#     spotify.playlist_add_items(playlist['id'], [track_id])
