@@ -1,11 +1,13 @@
 import os
 
 from flask import Flask, jsonify, redirect, render_template, render_template_string, request
+from flask import session
 import graphclass
 from adi_spotify_playlist_gen import create_playlist_with_username
 
 app = Flask(__name__)
-
+global reccomended_songs_global
+# app.secret_key = 'bruhmoment'
 dropdown_options = {
     'dropdown_1': {'label': 'loudness', 'options': ['Whisper', 'Quiet', 'Medium', 'Loud', 'No Eardrums']},
     'dropdown_2': {'label': 'tempo', 'options': ['Snail', 'Slow', 'Medium', 'Fast', 'Cheetah']},
@@ -66,6 +68,8 @@ def result():
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     result_dictionary = dictionary_obtainer()
     recommended_songs = my_graph.reccomend_songs(**result_dictionary)
+    global reccomended_songs_global
+    reccomended_songs_global = recommended_songs
 
     # Render a template with the form for entering Spotify username and recommended songs
     template = """
@@ -85,13 +89,15 @@ def result():
 def create_playlist():
     # Retrieve the Spotify username URL and recommended songs from the form
     spotify_username = request.form.get('spotify_username')
-    recommended_songs = request.form.get('recommended_songs')
-
+    spotify_username = spotify_username.split('/')[-1]
+    global reccomended_songs_global
     # Perform actions to create the playlist in Spotify using the username and recommended songs
-    create_playlist_with_username(recommended_songs.split(','), spotify_username)
+    print(reccomended_songs_global[0])
+    # print(reccomended_songs_global[0], type(reccomended_songs_global[0]))
+    create_playlist_with_username(reccomended_songs_global, spotify_username)
 
     # Redirect the user to their Spotify profile where they can view the created playlist
-    spotify_profile_url = f"https://www.spotify.com/{spotify_username}"
+    spotify_profile_url = f"https://open.spotify.com/user/{spotify_username}"
     return redirect(spotify_profile_url)
 
 
