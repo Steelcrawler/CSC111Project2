@@ -1,7 +1,9 @@
 import os
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, render_template_string, request
 import graphclass
+from adi_spotify_playlist_gen import create_playlist_with_username
+
 app = Flask(__name__)
 
 dropdown_options = {
@@ -51,17 +53,48 @@ def dictionary_obtainer():
     return final_effing_thing
 
 
+# @app.route('/result', methods=['POST'])
+# def result():
+#     my_graph=graphclass._Song_Graph()
+#     my_graph.read_csv_data('cleaned_spotify_songs.csv')
+#     result_dictionary = dictionary_obtainer()
+#     return my_graph.reccomend_songs(**result_dictionary)
+
 @app.route('/result', methods=['POST'])
 def result():
-    my_graph=graphclass._Song_Graph()
+    my_graph = graphclass._Song_Graph()
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     result_dictionary = dictionary_obtainer()
-    return my_graph.reccomend_songs(**result_dictionary)
+    recommended_songs = my_graph.reccomend_songs(**result_dictionary)
+
+    # Render a template with the form for entering Spotify username and recommended songs
+    template = """
+    <h1>Recommended Songs</h1>
+    <p>{{ recommended_songs }}</p>
+    <form action="{{ url_for('create_playlist') }}" method="post">
+        <label for="spotify_username">Enter your Spotify username URL:</label>
+        <input type="text" id="spotify_username" name="spotify_username" required>
+        <input type="submit" value="Create Playlist">
+    </form>
+
+    """
+    return render_template_string(template, recommended_songs=recommended_songs)
 
 
+@app.route('/create_playlist', methods=['POST'])
+def create_playlist():
+    # Retrieve the Spotify username URL and recommended songs from the form
+    spotify_username = request.form.get('spotify_username')
+    recommended_songs = request.form.get('recommended_songs')
 
+    # Perform actions to create the playlist in Spotify using the username and recommended songs
+    create_playlist_with_username(recommended_songs.split(','), spotify_username)
+
+    # Redirect the user to their Spotify profile where they can view the created playlist
+    spotify_profile_url = f"https://www.spotify.com/{spotify_username}"
+    return redirect(spotify_profile_url)
 
 
 if __name__ == '__main__':
     # app.run(debug=True)
-    app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 9976)))
+    app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 7779)))
