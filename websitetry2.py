@@ -24,11 +24,6 @@ def index():
     return render_template('index2.html', dropdown_options=dropdown_options)
 
 
-# Map the keys to the parameter names of the recommend_songs method
-
-
-
-
 def dictionary_obtainer():
     selected_options = []
     dict_of_return = {}
@@ -54,8 +49,6 @@ def dictionary_obtainer():
         final_effing_thing[var]=graphclass.get_range_str_from_index(dict2[var], graphclass.get_attribute_range(var), graphclass.get_num_splits(var))
 
     return final_effing_thing
-
-
 
 
 @app.route('/result', methods=['POST'])
