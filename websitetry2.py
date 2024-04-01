@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify, redirect, render_template, render_template_string, request
 from flask import session
 import graphclass
+import popularity3dgraph
 from adi_spotify_playlist_gen import create_playlist_with_username
 
 app = Flask(__name__)
@@ -131,6 +132,11 @@ def valencegraph():
 @app.route('/heatmap')
 def heatmap():
     return render_template('heatmap.html')
+
+@app.route('/3Dgraph')
+def draw3dGraph():
+    div = popularity3dgraph.generate_div_graph()
+    return render_template('3Dgraph.html', div=div)
 
 
 if __name__ == '__main__':
