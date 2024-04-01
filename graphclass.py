@@ -112,10 +112,12 @@ def get_num_splits(attribute: str) -> int:
         return 3  # no instruments, some instruments, all instruments
 
 
-def get_num_splits_stats() -> int:
+def get_num_splits_stats(attribute) -> int:
     """ Returns the number of splits for a given attribute for the stats graph. This
     value is always 10 to make the data easy to read.
     """
+    if type(attribute) == str:
+        return 10
     return 10
 
 
