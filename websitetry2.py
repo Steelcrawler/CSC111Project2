@@ -100,7 +100,39 @@ def create_playlist():
     spotify_profile_url = f"https://open.spotify.com/user/{spotify_username}"
     return redirect(spotify_profile_url)
 
+@app.route('/danceabilitygraph')
+def danceabilitygraph():
+    return render_template('danceabilityimage.html')
+
+@app.route('/energygraph')
+def energygraph():
+    return render_template('energyimage.html')
+
+@app.route('/instrumentalnessgraph')
+def instrumentalnessgraph():
+    return render_template('instrumentalnessimage.html')
+
+@app.route('/loudnessgraph')
+def loudnessgraph():
+    return render_template('loudnessimage.html')    
+
+@app.route('/speechinessgraph')
+def speechinessgraph():
+    return render_template('speechinessimage.html') 
+
+@app.route('/tempograph')
+def tempograph():
+    return render_template('tempoimage.html')   
+
+@app.route('/valencegraph')
+def valencegraph():
+    return render_template('valenceimage.html')
+
+@app.route('/heatmap')
+def heatmap():
+    return render_template('heatmap.html')
+
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 7779)))
+    app.run(debug=True)
+    # app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 7779)))

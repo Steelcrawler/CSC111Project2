@@ -23,12 +23,12 @@
         }
         /* CSS for button hover effect */
         input[type="submit"]:hover {
-            background-color: #87CEFA; /* Light Sky Blue */
+            background-color: #FFA07A; /* Light Sky Blue */
         }
         /* CSS for glowing effect */
         @keyframes glow {
             from {
-                box-shadow: 0 0 10px #9370DB; /* Medium Purple */
+                box-shadow: 0 0 10px #FFA07A; /* Medium Purple */
             }
             to {
                 box-shadow: 0 0 20px #800000; /* Rosy Brown */
@@ -41,8 +41,8 @@
             border: 2px solid #BC8F8F; /* Rosy Brown */
             border-radius: 5px;
             font-size: 16px;
-            color: #483D8B; /* Dark Slate Blue */
-            background-color: lavender;
+            color: #D35400; /* Orange */
+            background-color: #FFA07A;
             cursor: pointer;
             margin-bottom: 5px; /* Adjust margin between dropdowns */
             display: block; /* Ensure dropdowns are displayed vertically */
@@ -62,26 +62,30 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #F5B041;
+            background-color: #FF8C00;
         }
         .navbar li {
             float: left;
         }
         .navbar li a {
             display: block;
-            color: white;
+            color: black;
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
         }
         .navbar li a:hover {
-            background-color: #76D7C4;
+            background-color: #FFDAB9;
         }
         /* CSS for sub-menus */
         .sub-menu {
             display: none;
             position: absolute;
-            background-color: #D7BDE2;
+            background-color: #FFA07A;
+            list-style-type: none; /* Add this line */
+            padding: 0;
+            margin: 0;
+
         }
         .navbar li:hover .sub-menu {
             display: block;
@@ -94,19 +98,19 @@
         <li>
             <a href="#">Graphs</a>
             <ul class="sub-menu">
-                <li><a href="#" onclick="showImage('average_danceability.png')">Average Danceability</a></li>
-                <li><a href="#" onclick="showImage('average_energy.png')">Average Energy</a></li>
-                <li><a href="#" onclick="showImage('average_instrumentalness.png')">Average Instrumentalness</a></li>
-                <li><a href="#" onclick="showImage('average_loudness.png')">Average Loudness</a></li>
-                <li><a href="#" onclick="showImage('average_speechiness.png')">Average Speechiness</a></li>
-                <li><a href="#" onclick="showImage('average_tempo.png')">Average Tempo</a></li>
-                <li><a href="#" onclick="showImage('average_valence.png')">Average Valence</a></li>
+                <li><a href="/danceabilitygraph">Danceability Stats</a></li>
+                <li><a href="/energygraph">Energy Stats</a></li>
+                <li><a href="/instrumentalnessgraph">Instrumentalness Stats</a></li>
+                <li><a href="/loudnessgraph">Loudness Stats</a></li>
+                <li><a href="/speechinessgraph">Speechiness Stats</a></li>
+                <li><a href="/tempograph">Tempo Stats</a></li>
+                <li><a href="/valencegraph">Valence Stats</a></li>
             </ul>
         </li>
         <li>
-            <a href="#">Heatmap</a>
+            <a href="#">3D Visualizations</a>
             <ul class="sub-menu">
-                <li><a href="#" onclick="showImage('heatmap.png')">Heatmap</a></li>
+                <li><a href="/heatmap">Heatmap</a></li>
             </ul>
         </li>
     </ul>
