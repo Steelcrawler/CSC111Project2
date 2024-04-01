@@ -1,10 +1,11 @@
 import plotly.graph_objs as go
-from graphclass import _Song_Graph, _Song_Vertex
+from graphclass import _Song_Graph
+import websitetry2
+import csv
 
 
 def convert_range_string_to_tuple(range_string):
     range_split = range_string.split('-')
-    print(range_split)
     if len(range_split) == 2:  # Check if there are two parts in the split
         return (float(range_split[0]), float(range_split[1]))
     elif len(range_split) == 4:# both numbers are negative
@@ -13,6 +14,8 @@ def convert_range_string_to_tuple(range_string):
         return (float(range_split[0]), float(range_split[2])*-1)
     elif len(range_split) == 3 and range_split[0]=='':
         return (float(range_split[1])*-1, float(range_split[2]))
+    else:
+        return None
 
 
 
@@ -21,7 +24,7 @@ my_graph.read_csv_data('cleaned_spotify_songs.csv')
 valence = my_graph._vertices[('valence', '0.25-0.5')].neighbours
 dancability = my_graph._vertices[('danceability', '0.25-0.5')].neighbours
 union_set = valence.union(dancability)
-list1 = list(union_set)[:10]
+list1 = list(union_set)[:20]
 song_attributes = {}
 for item in list1:
     song_attributes[item.song_name] = {i.attribute: convert_range_string_to_tuple(i.interval) for i in item.neighbours}
@@ -45,6 +48,16 @@ def create_3d_scatter(x_attribute, y_attribute, z_attribute):
     y_range = [(rng[0] + rng[1]) / 2 for rng in [song_attributes[song][y_attribute] for song in songs]]
     z_range = [(rng[0] + rng[1]) / 2 for rng in [song_attributes[song][z_attribute] for song in songs]]
 
+    # Get loudness values
+    loudness_values = [song_attributes[song]['loudness'][0] for song in songs]
+
+    # Calculate the size of points based on loudness, ensuring it's within a reasonable range
+    # You can adjust the multiplier (10 in this case) to scale the size according to preference
+    min_loudness = min(loudness_values)
+    max_loudness = max(loudness_values)
+    normalized_loudness = [(loudness - min_loudness) / (max_loudness - min_loudness) for loudness in loudness_values]
+    sizes = [loudness * 10 for loudness in normalized_loudness]
+
     # Create a 3D scatter plot
     fig = go.Figure(data=[go.Scatter3d(
         x=x_range,
@@ -54,8 +67,11 @@ def create_3d_scatter(x_attribute, y_attribute, z_attribute):
         text=songs,  # Song names as hover text
         hoverinfo='text',
         marker=dict(
-            size=1,
-            opacity=0.8
+            size=sizes,  # Adjust the size based on loudness
+            opacity=0.8,
+            color=[song_attributes[song]['tempo'][0] for song in songs],  # Use tempo for coloring
+            colorscale='Viridis',  # Adjust colorscale for better visibility
+            colorbar=dict(title='Tempo')
         )
     )])
 
@@ -71,13 +87,5 @@ def create_3d_scatter(x_attribute, y_attribute, z_attribute):
     )
 
     fig.show()
-
-# Ask user to select three attributes
 selected_attributes = input("Select three attributes separated by commas from the given options (valence, energy, danceability, loudness, instrumentalness, tempo, speechiness, artist): ").split(',')
 create_3d_scatter(*selected_attributes)
-
-# Check if the selected attributes are valid
-# if all(attr in song_attributes['Song1'] for attr in selected_attributes) and len(selected_attributes) == 3:
-#     create_3d_scatter(*selected_attributes)
-# else:
-#     print("Invalid attributes. Please select three attributes from the given options.")
