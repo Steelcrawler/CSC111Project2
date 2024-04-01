@@ -1,7 +1,10 @@
+"""CSC111 Project 2"""
 from __future__ import annotations
 from typing import Any, Optional
 import csv
-import math
+# import math
+
+import python_ta
 
 
 class _Vertex:
@@ -83,8 +86,8 @@ class Graph:
 
 
 def get_num_splits(attribute: str) -> int:
-    ''' Return the number of splits for a given attribute
-    '''
+    """ Return the number of splits for a given attribute.
+    """
     # return 10
     if attribute == 'loudness':
         return 5  # whisper, quiet, medium, loud, no eardrums
@@ -103,15 +106,15 @@ def get_num_splits(attribute: str) -> int:
 
 
 def get_num_splits_stats(attribute: str) -> int:
-    ''' Returns the number of splits for a given attribute for the stats graph. This
+    """ Returns the number of splits for a given attribute for the stats graph. This
     value is always 10 to make the data easy to read.
-    '''
+    """
     return 10
 
 
 def get_attribute_range(attribute: str) -> tuple:
-    ''' Return the range of values for a given attribute
-    '''
+    """ Return the range of values for a given attribute
+    """
     if attribute == 'loudness':
         return (-60, 10)
     if attribute == 'tempo':
@@ -128,9 +131,9 @@ def get_attribute_range(attribute: str) -> tuple:
         return (0, 1)
 
 
-def Create_Attribute_Vertices(vertices: dict, attribute: str, attribute_interval: tuple, key) -> None:
-    ''' Create a list of attribute vertices for a given attribute
-    '''
+def create_attribute_vertices(vertices: dict, attribute: str, attribute_interval: tuple, key) -> None:
+    """ Create a list of attribute vertices for a given attribute
+    """
     num_splits = key(attribute)
     start = attribute_interval[0]
     end = attribute_interval[1]
@@ -143,14 +146,14 @@ def Create_Attribute_Vertices(vertices: dict, attribute: str, attribute_interval
 
 
 def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
-    ''' Get the range in which a given value fallsm where the first number is inclusive and the second number is exclusive
+    """ Get the range in which a given value fallsm where the first number's inclusive and the second number's exclusive
     >>> get_value_range(0.25, (0.0, 1.0), 4)
     '0.25-0.5'
     >>> get_value_range(0.0, (0.0, 1.0), 4)
     '0.0-0.25'
     >>> get_value_range(1.0, (0.0, 1.0), 4)
     '0.75-1.0'
-    '''
+    """
     start, end = total_range
     split_size = (end - start) / num_splits
     for i in range(num_splits):
@@ -162,7 +165,7 @@ def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
 
 
 def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> int:
-    ''' Get the corresponding index of a given range string in the total range
+    """ Get the corresponding index of a given range string in the total range.
 
     >>> reverse_value_range('0.25-0.5', (0.0, 1.0), 4)
     2
@@ -180,7 +183,7 @@ def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> 
     5
     >>> reverse_value_range('0.9-1.0', (0.0, 1.0), 10)
     10
-    '''
+    """
     start, end = total_range
     if range_str.startswith('-'):
         range_start = float(range_str[1:].split('-', 1)[0]) * -1
@@ -192,7 +195,7 @@ def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> 
 
 
 def get_range_str_from_index(i: int, total_range: tuple, num_splits: int) -> str:
-    ''' Get the corresponding range string of a given index in the total range
+    """ Get the corresponding range string of a given index in the total range.
 
     >>> get_range_str_from_index(2, (0.0, 1.0), 4)
     '0.25-0.5'
@@ -212,18 +215,25 @@ def get_range_str_from_index(i: int, total_range: tuple, num_splits: int) -> str
     '0.9-1.0'
     >>> get_range_str_from_index(2, (0.0, 1.0), 3)
     '0.33-0.67'
-    '''
+    """
     start, end = total_range
     split_size = (end - start) / num_splits
-    range_start = round(start + (i - 1) * split_size,2)
-    range_end = round(start + i * split_size,2)
+    range_start = round(start + (i - 1) * split_size, 2)
+    range_end = round(start + i * split_size, 2)
     return f"{range_start}-{range_end}"
 
 
-
 class _Song_Vertex(_Vertex):
-    ''' A song vertex in a graph
-    '''
+    """ Represents a song vertex in a graph.
+
+    Instance Attributes:
+        - song_name: The name of the song.
+        - artist: The name of the artist.
+        - song_id: The id of the song.
+        - track_popularity: The popularity of the song track.
+
+    Representation Invariants:
+    """
     song_name: str
     artist: str
     song_id: str
@@ -238,15 +248,15 @@ class _Song_Vertex(_Vertex):
         self.track_popularity = track_popularity
 
     def add_neighbor(self, vertex: _Vertex) -> None:
-        ''' Add an edge between this song vertex and an attribute vertex
-        '''
+        """ Add an edge between this song vertex and an attribute vertex
+        """
         self.neighbours.add(vertex)
         vertex.neighbours.add(self)
 
 
 class _Attribute_Vertex(_Vertex):
-    ''' An attribute vertex in a graph
-    '''
+    """ An attribute vertex in a graph
+    """
     attribute: str
     interval: str
 
@@ -257,11 +267,11 @@ class _Attribute_Vertex(_Vertex):
 
 
 class _Song_Graph(Graph):
-    ''' A graph of attribute ranges, with neighbors of the attribute ranges being the songs
+    """ A graph of attribute ranges, with neighbors of the attribute ranges being the songs
 
     Representation Invariants:
         - all(isinstance(self._vertices[item], _Attribute_Vertex) for item in self._vertices)
-    '''
+    """
 
     _vertices: dict[(str, str), _Vertex]  # attribute, range for the vertex, and the vertex object itself
     attributes: dict[str, tuple]  # general attribute ranges of any song
@@ -281,15 +291,15 @@ class _Song_Graph(Graph):
             self.key = get_num_splits
         if stats:
             for attribute in self.attributes:
-                Create_Attribute_Vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits_stats)
+                create_attribute_vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits_stats)
         else:
             for attribute in self.attributes:
-                Create_Attribute_Vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits)
+                create_attribute_vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits)
 
     def add_song(self, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness,
                  loudness, artist, track_popularity):
-        ''' Add a song to the graph by creating edges between the song and the attribute vertices
-        '''
+        """ Add a song to the graph by creating edges between the song and the attribute vertices
+        """
         song_vertex = _Song_Vertex(track_name, track_id, set(), artist, track_popularity=track_popularity)
         song_attributes = {'valence': valence, 'energy': energy, 'danceability': danceability,
                            'loudness': loudness, 'instrumentalness': instrumentalness,
@@ -305,8 +315,8 @@ class _Song_Graph(Graph):
                 song_vertex.add_neighbor(self._vertices[(attribute, range_str)])
 
     def read_csv_data(self, filename: str) -> None:
-        ''' Read a csv file of song data and add the songs to the graph
-        '''
+        """ Read a csv file of song data and add the songs to the graph
+        """
         with open(filename, 'r') as file:
             reader = csv.reader(file)
             next(reader)  # Skip the header row
@@ -320,8 +330,8 @@ class _Song_Graph(Graph):
                         danceability: Optional[str] = None, loudness: Optional[str] = None,
                         instrumentalness: Optional[str] = None, tempo: Optional[str] = None,
                         speechiness: Optional[str] = None) -> list:
-        ''' Return a list of songs that are similar to the given attributes
-        '''
+        """ Return a list of songs that are similar to the given attributes
+        """
         vertices_set = None
         attributes = {('valence', valence), ('energy', energy), ('danceability', danceability),
                       ('loudness', loudness), ('instrumentalness', instrumentalness),
@@ -351,3 +361,9 @@ if __name__ == '__main__':
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     print(len(my_graph.reccomend_songs(instrumentalness='')))
     # print(len(my_graph.reccomend_songs(valence='0.1-0.2', danceability='0.1-0.2')))
+
+    python_ta.check_all(config={
+        'extra-imports': [],  # the names (strs) of imported modules
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })
