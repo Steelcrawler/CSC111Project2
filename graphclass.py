@@ -18,10 +18,17 @@ class _Vertex:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
     """
+    track_popularity: None
+    attribute: None
+    interval: None
+    song_name: None
     neighbours: set[_Vertex]
 
     def __init__(self, neighbours: set[_Vertex]) -> None:
         """Initialize a new vertex with the given item and neighbours."""
+        self.track_popularity = None
+        self.attribute = None
+        self.interval = None
         self.song_name = None
         self.neighbours = neighbours
 
@@ -105,7 +112,7 @@ def get_num_splits(attribute: str) -> int:
         return 3  # no instruments, some instruments, all instruments
 
 
-def get_num_splits_stats(attribute: str) -> int:
+def get_num_splits_stats() -> int:
     """ Returns the number of splits for a given attribute for the stats graph. This
     value is always 10 to make the data easy to read.
     """
@@ -131,7 +138,7 @@ def get_attribute_range(attribute: str) -> tuple:
         return (0, 1)
 
 
-def create_attribute_vertices(vertices: dict, attribute: str, attribute_interval: tuple, key) -> None:
+def create_attribute_vertices(vertices: dict, attribute: str, attribute_interval: tuple, key: callable) -> None:
     """ Create a list of attribute vertices for a given attribute
     """
     num_splits = key(attribute)
@@ -142,7 +149,7 @@ def create_attribute_vertices(vertices: dict, attribute: str, attribute_interval
         interval_start = round(start + i * interval_size, 2)
         interval_end = round(start + (i + 1) * interval_size, 2)
         interval = f"{interval_start}-{interval_end}"
-        vertices[(attribute, interval)] = _Attribute_Vertex(attribute, interval, set())
+        vertices[(attribute, interval)] = AttributeVertex(attribute, interval, set())
 
 
 def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
@@ -223,7 +230,7 @@ def get_range_str_from_index(i: int, total_range: tuple, num_splits: int) -> str
     return f"{range_start}-{range_end}"
 
 
-class _Song_Vertex(_Vertex):
+class SongVertex(_Vertex):
     """ Represents a song vertex in a graph.
 
     Instance Attributes:
@@ -233,6 +240,10 @@ class _Song_Vertex(_Vertex):
         - track_popularity: The popularity of the song track.
 
     Representation Invariants:
+        - song_name != ''
+        - artist != ''
+        - song_id != ''
+        - track_popularity != ''
     """
     song_name: str
     artist: str
@@ -249,13 +260,25 @@ class _Song_Vertex(_Vertex):
 
     def add_neighbor(self, vertex: _Vertex) -> None:
         """ Add an edge between this song vertex and an attribute vertex
+
+        Preconditions:
+            - vertex: A Vetex object representing the neighbouring vertex.
+            - neighbours: A set that contains neighbouring vertices.
         """
         self.neighbours.add(vertex)
         vertex.neighbours.add(self)
 
 
-class _Attribute_Vertex(_Vertex):
-    """ An attribute vertex in a graph
+class AttributeVertex(_Vertex):
+    """ An attribute vertex in a graph.
+
+    Instance Attributes:
+        - attribute: A string that represents the attribute name.
+        - interval: A string that represents the interval of the attribute.
+
+    Representation Invariants:
+        - attribute != ''
+        - interval != ''
     """
     attribute: str
     interval: str
@@ -266,18 +289,24 @@ class _Attribute_Vertex(_Vertex):
         self.interval = interval
 
 
-class _Song_Graph(Graph):
+class SongGraph(Graph):
     """ A graph of attribute ranges, with neighbors of the attribute ranges being the songs
 
-    Representation Invariants:
-        - all(isinstance(self._vertices[item], _Attribute_Vertex) for item in self._vertices)
-    """
+    Instance Attributes:
+        - stats: A boolean indicating whether to use stats for the attribute splits.
+        - _vertices: A dictionary containing attribute vertices as keys and their corresponding vertex objects.
+        - attributes: A dictionary containing attribute ranges for general song attributes.
+        - key: A callable function use to determine the number of splits.
 
+    Representation Invariants:
+        - all(isinstance(self._vertices[item], AttributeVertex) for item in self._vertices)
+    """
+    stats: bool
     _vertices: dict[(str, str), _Vertex]  # attribute, range for the vertex, and the vertex object itself
     attributes: dict[str, tuple]  # general attribute ranges of any song
     key: callable
 
-    def __init__(self, stats=False) -> None:
+    def __init__(self, stats: bool = False) -> None:
         super().__init__()
         self.attributes = {'valence': get_attribute_range('valence'), 'energy': get_attribute_range('energy'),
                            'danceability': get_attribute_range('danceability'),
@@ -296,11 +325,12 @@ class _Song_Graph(Graph):
             for attribute in self.attributes:
                 create_attribute_vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits)
 
-    def add_song(self, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness,
-                 loudness, artist, track_popularity):
-        """ Add a song to the graph by creating edges between the song and the attribute vertices
+    def add_song(self, track_name: str, track_id: str, valence: float, energy: float, danceability: float,
+                 instrumentalness: float, tempo: float, speechiness: float, loudness: float, artist: str,
+                 track_popularity: str) -> None:
+        """ Add a song to the graph by creating edges between the song and the attribute vertices.
         """
-        song_vertex = _Song_Vertex(track_name, track_id, set(), artist, track_popularity=track_popularity)
+        song_vertex = SongVertex(track_name, track_id, set(), artist, track_popularity=track_popularity)
         song_attributes = {'valence': valence, 'energy': energy, 'danceability': danceability,
                            'loudness': loudness, 'instrumentalness': instrumentalness,
                            'tempo': tempo, 'speechiness': speechiness, 'artist': artist}
@@ -317,11 +347,12 @@ class _Song_Graph(Graph):
     def read_csv_data(self, filename: str) -> None:
         """ Read a csv file of song data and add the songs to the graph
         """
-        with open(filename, 'r') as file:
+        with (open(filename, 'r') as file):
             reader = csv.reader(file)
             next(reader)  # Skip the header row
             for row in reader:
-                track_artist, track_name, track_id, valence, energy, danceability, instrumentalness, tempo, speechiness, loudness, popularity = row
+                track_artist, track_name, track_id, valence, energy, danceability, \
+                    instrumentalness, tempo, speechiness, loudness, popularity = row
                 self.add_song(track_name, track_id, float(valence), float(energy),
                               float(danceability), float(instrumentalness), float(tempo),
                               float(speechiness), float(loudness), track_artist, popularity)
@@ -356,14 +387,14 @@ class _Song_Graph(Graph):
 
 
 if __name__ == '__main__':
-    my_graph = _Song_Graph()
-    # my_graph = _Song_Graph(stats=True)
+    my_graph = SongGraph()
+    # my_graph = SongGraph(stats=True)
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
-    print(len(my_graph.reccomend_songs(instrumentalness='')))
+    # print(len(my_graph.reccomend_songs(instrumentalness='')))
     # print(len(my_graph.reccomend_songs(valence='0.1-0.2', danceability='0.1-0.2')))
 
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'extra-imports': ['csv'],  # the names (strs) of imported modules
+        'allowed-io': ['add_song', 'reccomend_songs', 'read_csv_data'],
         'max-line-length': 120
     })
