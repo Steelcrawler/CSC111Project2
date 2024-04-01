@@ -56,10 +56,67 @@
             transform: translateY(-50%);
             pointer-events: none;
         }
+        /* CSS for navigation bar */
+        .navbar {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #F5B041;
+        }
+        .navbar li {
+            float: left;
+        }
+        .navbar li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        .navbar li a:hover {
+            background-color: #76D7C4;
+        }
+        /* CSS for sub-menus */
+        .sub-menu {
+            display: none;
+            position: absolute;
+            background-color: #D7BDE2;
+        }
+        .navbar li:hover .sub-menu {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
+    <ul class="navbar">
+        <li>
+            <a href="#">Graphs</a>
+            <ul class="sub-menu">
+                <li><a href="#" onclick="showImage('average_danceability.png')">Average Danceability</a></li>
+                <li><a href="#" onclick="showImage('average_energy.png')">Average Energy</a></li>
+                <li><a href="#" onclick="showImage('average_instrumentalness.png')">Average Instrumentalness</a></li>
+                <li><a href="#" onclick="showImage('average_loudness.png')">Average Loudness</a></li>
+                <li><a href="#" onclick="showImage('average_speechiness.png')">Average Speechiness</a></li>
+                <li><a href="#" onclick="showImage('average_tempo.png')">Average Tempo</a></li>
+                <li><a href="#" onclick="showImage('average_valence.png')">Average Valence</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Heatmap</a>
+            <ul class="sub-menu">
+                <li><a href="#" onclick="showImage('heatmap.png')">Heatmap</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <div id="imageContainer">
+        <!-- Images will be dynamically loaded here -->
+    </div>
+
     <h1>Select Dropdowns</h1>
+
     <form action="/result" method="post">
         <div id="checkboxContainer">
             <label>Select Dropdowns to Include:</label><br>
@@ -153,6 +210,11 @@
                 return "A " + label.toUpperCase();
             }
         }
+        function showImage(imageName) {
+            var imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = '<img src="images/' + imageName + '" alt="' + imageName + '">';
+        }
     </script>
+
 </body>
 </html>
