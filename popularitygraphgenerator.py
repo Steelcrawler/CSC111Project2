@@ -1,9 +1,30 @@
-import graphclass
+"""CSC111 Project 2
+
+Error Explanations:
+[Line 32] Disallowed name "bar". You should give your variables meaningful rather than generic names.
+Reasoning: This is literally the name for each bar in the bar graph
+
+[Line 34] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
+the class in which it is defined.
+Reasoning: Access to vertices of the graph object to generate a visual graph
+
+[Line 45] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
+the class in which it is defined.
+Reasoning: Access to vertices of the graph object to generate a visual graph
+
+"""
+import python_ta
 import matplotlib.pyplot as plt
+import graphclass
 
 
 if __name__ == '__main__':
-    graph = graphclass._Song_Graph()
+    python_ta.check_all(config={
+        'extra-imports': ['graphclass', 'matplotlib.pyplot'],
+        'allowed-io': ['create_playlist'],
+        'max-line-length': 120
+    })
+    graph = graphclass.SongGraph(stats=True)
     graph.read_csv_data("cleaned_spotify_songs.csv")
     for attribute in {'danceability', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'tempo', 'valence'}:
         range_to_popularity = {}
@@ -18,7 +39,7 @@ if __name__ == '__main__':
                     average_popularity = total_popularity / len(neighbors)
                     range_to_popularity[vertex[1]] = average_popularity
                     range_to_count[vertex[1]] = len(neighbors)
-        
+
         plt.figure(figsize=(12, 6))
         bars = plt.bar(range_to_popularity.keys(), range_to_popularity.values(), width=0.5)
         for bar, count in zip(bars, range_to_count.values()):
@@ -28,5 +49,5 @@ if __name__ == '__main__':
         plt.ylabel('Average Popularity')
         plt.title(f'Average Popularity by Attribute Range for {attribute.capitalize()}')
         plt.tight_layout()
-        plt.savefig(f'average_{attribute}.png')
+        # plt.savefig(f'average_{attribute}.png')
         plt.show()
