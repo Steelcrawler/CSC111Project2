@@ -1,8 +1,7 @@
 """CSC111 Project 2"""
 import python_ta
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-import spotipy.util as util
+from spotipy import util
 
 
 def create_playlist(songs: list) -> None:
@@ -73,7 +72,7 @@ def create_playlist_with_username(songs: list, username: str) -> None:
 
 if __name__ == '__main__':
     python_ta.check_all(config={
-        'extra-imports': ['spotipy', 'spotipy.util'],  # the names (strs) of imported modules
-        'allowed-io': ['create_playlist'],  # the names (strs) of functions that call print/open/input
+        'extra-imports': ['spotipy', 'spotipy.util', 'spotipy.oauth2'],
+        'allowed-io': ['create_playlist'],
         'max-line-length': 120
     })
