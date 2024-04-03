@@ -82,20 +82,14 @@ def result() -> str:
     result_dictionary = dictionary_obtainer()
     recommended_songs = my_graph.reccomend_songs(**result_dictionary)
     global reccomended_songs_global
-    reccomended_songs_global = recommended_songs
+    if len(recommended_songs) > 100:
+        reccomended_songs_global = recommended_songs[:100]
 
-    # Render a template with the form for entering Spotify username and recommended songs
-    template = """
-    <h1>Recommended Songs</h1>
-    <p>{{ recommended_songs }}</p>
-    <form action="{{ url_for('create_playlist') }}" method="post">
-        <label for="spotify_username">Enter your Spotify username URL:</label>
-        <input type="text" id="spotify_username" name="spotify_username" required>
-        <input type="submit" value="Create Playlist">
-    </form>
-
-    """
-    return render_template_string(template, recommended_songs=recommended_songs)
+    if len(recommended_songs) > 20:
+        recommended_songs = recommended_songs[:20] + ['and more!']
+        recommended_songs = ', '.join(recommended_songs)
+    
+    return render_template('result.html', recommended_songs=recommended_songs)
 
 
 @app.route('/create_playlist', methods=['POST'])

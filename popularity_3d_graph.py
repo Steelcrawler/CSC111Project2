@@ -150,7 +150,7 @@ def generate_div_graph() -> str:
 
     # Add labels to the axes
     fig.update_layout(
-        title='3D Scatter Plot of Attributes',
+        title='3D Plot of Attributes, their Percentile, and Popularity',
         scene={"xaxis_title": 'Attributes', "yaxis_title": 'Percentile (in 10% increments)',
                "zaxis_title": 'Popularity'},
         autosize=False,

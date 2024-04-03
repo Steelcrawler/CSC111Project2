@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Songs</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="mb-4">Recommended Songs</h1>
+        <p class="text-muted">{{ recommended_songs }}</p>
+        <p class="text-muted">Now make it a Spotify playlist! This may take a while; please wait for the website to load.</p>
+        <p class="text-muted">Once it has finished, you will be redirected to your Spotify profile.</p>
+        <form action="{{ url_for('create_playlist') }}" method="post" class="bg-white p-4 rounded shadow-sm">
+            <div class="form-group">
+                <label for="spotify_username">Enter your Spotify Profile URL:</label>
+                <input type="text" id="spotify_username" name="spotify_username" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Playlist</button>
+        </form>
+        <a href="{{ url_for('index') }}" class="btn btn-link mt-3">Back to Home</a>
+    </div>
+</body>
+</html>
