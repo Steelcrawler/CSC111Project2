@@ -1,18 +1,45 @@
-"""CSC111 Project 2"""
-# import os
+"""CSC111 Project 2
+
+Error Explanations:
+[Line 40] Forbidden top-level code found on line 39
+Reasoning: Need this line of code to create the flask app
+
+[Line 41] Forbidden top-level code found on line 40
+Reasoning: Need this global variable to store the recommended songs throughout the different app routes
+
+[Line 40] Global variables must be constants or type aliases in CSC108/CSC148: a global variable 'app' is assigned to
+on line 11
+Reasoning: Need this line of code to create the flask app
+
+[Line 41/111/129] Global variables must be constants or type aliases in CSC108/CSC148: the keyword 'global' is used
+Reasoning: Need this global variable to store the recommended songs throughout the different app routes
+
+[Line 59] Global variables must be constants or type aliases in CSC108/CSC148: a global variable 'dropdown_options'
+is assigned to on line 13
+Reasoning: Need these drop down options as they are what the user sees when they are selecting attributes
+
+[Line 40] Constant name "app" should be in UPPER_CASE_WITH_UNDERSCORES format. Constants should be all-uppercase words
+with each word separated by an underscore. A single leading underscore can be used to denote a private constant.
+Reasoning: flask app documentation uses app in lower case
+
+[Line 41] Every global variable can be referenced from the module level, so using the 'global' keyword at the module
+level has no effect.
+Reasoning: Need to initialize global variable before use in the module level
+
+"""
+
+
 from typing import Any
 
 import python_ta
-from flask import Flask, Response, redirect, render_template, render_template_string, request
-# from flask import session
+from flask import Flask, Response, redirect, render_template, request
 import graphclass
 import popularity_3d_graph
 from spotify_playlist_generator import create_playlist_with_username
 
 app = Flask(__name__)
 global reccomended_songs_global
-# app.secret_key = 'bruhmoment'
-dropdown_options = {
+DROPDOWN_OPTIONS = {
     'dropdown_1': {'label': 'loudness', 'options': ['Whisper', 'Quiet', 'Medium', 'Loud', 'No Eardrums']},
     'dropdown_2': {'label': 'tempo', 'options': ['Snail', 'Slow', 'Medium', 'Fast', 'Cheetah']},
     'dropdown_3': {'label': 'speechiness', 'options': ['No Words', 'Some', 'Lotta Words']},
@@ -29,9 +56,9 @@ dropdown_options = {
 def index() -> str:
     """ Render the index page with dropdown options.
     """
-    global dropdown_options
+    global DROPDOWN_OPTIONS
 
-    return render_template('index2.html', dropdown_options=dropdown_options)
+    return render_template('index2.html', dropdown_options=DROPDOWN_OPTIONS)
 
 
 def dictionary_obtainer() -> dict[Any, str]:
@@ -57,7 +84,7 @@ def dictionary_obtainer() -> dict[Any, str]:
                 new_dict[row['label']] = int(lst[0])
         return new_dict
 
-    dict2 = get_new(dropdown_options, dict_of_return)
+    dict2 = get_new(DROPDOWN_OPTIONS, dict_of_return)
     obtained_dict = {}
     for var in dict2:
         obtained_dict[var] = graphclass.get_range_str_from_index(dict2[var], graphclass.get_attribute_range(var),
@@ -88,7 +115,7 @@ def result() -> str:
     if len(recommended_songs) > 20:
         recommended_songs = recommended_songs[:20] + ['and more!']
         recommended_songs = ', '.join(recommended_songs)
-    
+
     return render_template('result.html', recommended_songs=recommended_songs)
 
 
@@ -175,10 +202,11 @@ def draw3dgraph() -> str:
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
     # app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 7899)))
     python_ta.check_all(config={
-        'extra-imports': ['os', 'flask', 'graphclass', 'popularity_3d_graph', 'adi_spotify_playlist_gen'],
+        'extra-imports': ['os', 'flask', 'graphclass', 'popularity_3d_graph', 'adi_spotify_playlist_gen',
+                          'spotify_playlist_generator'],
         'allowed-io': ['create_playlist'],
         'max-line-length': 120
     })
