@@ -1,0 +1,6 @@
+Flask==3.0.2
+matplotlib==3.8.3
+pandas==2.2.1
+plotly==5.18.0
+python_ta==2.7.0
+spotipy==2.23.0
