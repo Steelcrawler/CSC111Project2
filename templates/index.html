@@ -3,223 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Dropdown Selection</title>
-    <style>
-        /* CSS for button styling */
-        input[type="submit"] {
-            background-color: #1E90FF; /* Dodger Blue */
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 10px;
-            transition-duration: 0.4s;
-            animation: glow 1s infinite alternate;
-        }
-        /* CSS for button hover effect */
-        input[type="submit"]:hover {
-            background-color: #FFA07A; /* Light Sky Blue */
-        }
-        /* CSS for glowing effect */
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 10px #FFA07A; /* Medium Purple */
-            }
-            to {
-                box-shadow: 0 0 20px #800000; /* Rosy Brown */
-            }
-        }
-        /* CSS for dropdown styling */
-        select {
-            padding: 5px;
-            text-align: center;
-            border: 2px solid #BC8F8F; /* Rosy Brown */
-            border-radius: 5px;
-            font-size: 16px;
-            color: #D35400; /* Orange */
-            background-color: #FFA07A;
-            cursor: pointer;
-            margin-bottom: 5px; /* Adjust margin between dropdowns */
-            display: block; /* Ensure dropdowns are displayed vertically */
-        }
-        /* CSS for dropdown arrow icon */
-        select::after {
-            content: '\25BC'; /* Unicode character for down arrow */
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
-        /* CSS for navigation bar */
-        .navbar {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #FF8C00;
-        }
-        .navbar li {
-            float: left;
-        }
-        .navbar li a {
-            display: block;
-            color: black;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-        .navbar li a:hover {
-            background-color: #FFDAB9;
-        }
-        /* CSS for sub-menus */
-        .sub-menu {
-            display: none;
-            position: absolute;
-            background-color: #FFA07A;
-            list-style-type: none; /* Add this line */
-            padding: 0;
-            margin: 0;
-
-        }
-        .navbar li:hover .sub-menu {
-            display: block;
-        }
-
-    </style>
+    <title>Multiple Dropdowns Example</title>
 </head>
 <body>
-    <ul class="navbar">
-        <li>
-            <a href="#">Graphs</a>
-            <ul class="sub-menu">
-                <li><a href="/danceabilitygraph">Danceability Stats</a></li>
-                <li><a href="/energygraph">Energy Stats</a></li>
-                <li><a href="/instrumentalnessgraph">Instrumentalness Stats</a></li>
-                <li><a href="/loudnessgraph">Loudness Stats</a></li>
-                <li><a href="/speechinessgraph">Speechiness Stats</a></li>
-                <li><a href="/tempograph">Tempo Stats</a></li>
-                <li><a href="/valencegraph">Valence Stats</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">3D Visualizations</a>
-            <ul class="sub-menu">
-                <li><a href="/heatmap">Heatmap</a></li>
-                <li><a href="/3Dgraph">3D Graph with Plotly</a></li>
-            </ul>
-        </li>
-    </ul>
-
-    <div id="imageContainer">
-        <!-- Images will be dynamically loaded here -->
-    </div>
-
-    <h1>Select Dropdowns</h1>
-
+    <h1>Select Options</h1>
     <form action="/result" method="post">
-        <div id="checkboxContainer">
-            <label>Select Dropdowns to Include:</label><br>
-            <input type="checkbox" id="dropdown_checkbox_loudness" name="dropdown_checkboxes[]" value="dropdown_1">
-            <label for="dropdown_checkbox_loudness">Loudness</label><br>
-            <input type="checkbox" id="dropdown_checkbox_tempo" name="dropdown_checkboxes[]" value="dropdown_2">
-            <label for="dropdown_checkbox_tempo">Tempo</label><br>
-            <input type="checkbox" id="dropdown_checkbox_speechiness" name="dropdown_checkboxes[]" value="dropdown_3">
-            <label for="dropdown_checkbox_speechiness">Speechiness</label><br>
-            <input type="checkbox" id="dropdown_checkbox_valence" name="dropdown_checkboxes[]" value="dropdown_4">
-            <label for="dropdown_checkbox_valence">Valence</label><br>
-            <input type="checkbox" id="dropdown_checkbox_energy" name="dropdown_checkboxes[]" value="dropdown_5">
-            <label for="dropdown_checkbox_energy">Energy</label><br>
-            <input type="checkbox" id="dropdown_checkbox_danceability" name="dropdown_checkboxes[]" value="dropdown_6">
-            <label for="dropdown_checkbox_danceability">Danceability</label><br>
-            <input type="checkbox" id="dropdown_checkbox_instrumentals" name="dropdown_checkboxes[]" value="dropdown_7">
-            <label for="dropdown_checkbox_instrumentals">Instrumentals</label><br>
-        </div>
+        <select name="dropdown_1">
+            <option value="Whisper">Whisper</option>
+            <option value="Quiet">Quiet</option>
+            <option value="Medium">Medium</option>
+            <option value="Loud">Loud</option>
+            <option value="No Eardrums">No Eardrums</option>
+        </select>
         <br><br>
-        <div id="dropdownContainer"></div>
+
+        <select name="dropdown_2">
+            <option value="Snail">Snail</option>
+            <option value="Slow">Slow</option>
+            <option value="Medium">Medium</option>
+            <option value="Fast">Fast</option>
+            <option value="Cheetah">Cheetah</option>
+
+        </select>
+        <br><br>
+
+        <select name="dropdown_3">
+            <option value="No Words">NoWords</option>
+            <option value="Some">Some</option>
+            <option value="Lotta Words">Lotta Words</option>
+        </select>
+        <br><br>
+
+        <select name="dropdown_4">
+            <option value="Depression">Depression</option>
+            <option value="In my room blues">In my roomblues</option>
+            <option value="Sorta Happy">Sorta Happy</option>
+            <option value="Dancing on the street">Dancing on the street</option>
+            <option value="On Drugs">On Drugs</option>
+
+        </select>
+        <br><br>
+
+        <select name="dropdown_5">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Hyperactive">Hyperactive</option>
+        </select>
+        <br><br>
+
+        <select name="dropdown_6">
+            <option value="No dancing">No dancing</option>
+            <option value="Get a little jiggy">Get a little jiggy</option>
+            <option value="Club vibes">Clubvibes</option>
+            <option value="U wanna be Beyonce">U wanna be Beyonce</option>
+        </select>
+        <br><br>
+
+        <select name="dropdown_7">
+            <option value="None">None</option>
+            <option value="Some">Some</option>
+            <option value="Only instruments">Only instruments</option>
+        </select>
         <br><br>
         <input type="submit" value="Submit">
     </form>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var dropdownContainer = document.querySelector("#dropdownContainer");
-            var checkboxes = document.querySelectorAll('input[name="dropdown_checkboxes[]"]');
-
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener("change", function() {
-                    var dropdownId = this.value;
-                    var dropdown = document.querySelector("#" + dropdownId);
-                    if (this.checked) {
-                        if (!dropdown) {
-                            dropdown = document.createElement("select");
-                            dropdown.id = dropdownId;
-                            dropdown.name = dropdownId;
-                            // Get label for dropdown
-                            var label = document.querySelector('label[for="' + checkbox.id + '"]').textContent;
-                            // Populate dropdown options based on dropdown number
-                            var options = getDropdownOptions(dropdownId);
-                            // Add a placeholder option
-                            var placeholderOption = document.createElement("option");
-                            placeholderOption.value = "";
-                            placeholderOption.textContent = "SELECT " + getPlaceholderText(label) + " LEVEL";
-                            dropdown.appendChild(placeholderOption);
-                            options.forEach(function(option) {
-                                var optionElem = document.createElement("option");
-                                optionElem.value = option;
-                                optionElem.textContent = option;
-                                dropdown.appendChild(optionElem);
-                            });
-                            dropdownContainer.appendChild(dropdown);
-                        }
-                    } else {
-                        if (dropdown) {
-                            dropdown.remove();
-                        }
-                    }
-                });
-            });
-        });
-        function getDropdownOptions(dropdownId) {
-            switch (dropdownId) {
-                case "dropdown_1":
-                    return ["Whisper", "Quiet", "Medium", "Loud", "No Eardrums"];
-                case "dropdown_2":
-                    return ["Snail", "Slow", "Medium", "Fast", "Cheetah"];
-                case "dropdown_3":
-                    return ["No Words", "Some", "Lotta Words"];
-                case "dropdown_4":
-                    return ["Depression", "In my room blues", "Sorta Happy", "Dancing on the street", "On Drugs"];
-                case "dropdown_5":
-                    return ["Low", "Medium", "High", "Hyperactive"];
-                case "dropdown_6":
-                    return ["No dancing", "Get a little jiggy", "Club vibes", "U wanna be Beyonce"];
-                case "dropdown_7":
-                    return ["None", "Some", "Only instruments"];
-                default:
-                    return [];
-            }
-        }
-        function getPlaceholderText(label) {
-            // Adjust the placeholder text based on the label
-            if (label.toLowerCase().includes("energy")) {
-                return "AN " + label.toUpperCase();
-            } else if (label.toUpperCase().includes("speechiness")) {
-                return "A " + label.toUpperCase().replace("iness", "");
-            } else {
-                return "A " + label.toUpperCase();
-            }
-        }
-        function showImage(imageName) {
-            var imageContainer = document.getElementById('imageContainer');
-            imageContainer.innerHTML = '<img src="images/' + imageName + '" alt="' + imageName + '">';
-        }
-    </script>
-
 </body>
 </html>

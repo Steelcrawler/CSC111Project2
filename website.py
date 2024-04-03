@@ -31,7 +31,7 @@ def index() -> str:
     """
     global dropdown_options
 
-    return render_template('index.html', dropdown_options=dropdown_options)
+    return render_template('index2.html', dropdown_options=dropdown_options)
 
 
 def dictionary_obtainer() -> dict[Any, str]:
