@@ -31,7 +31,7 @@ def index() -> str:
     """
     global dropdown_options
 
-    return render_template('index2.html', dropdown_options=dropdown_options)
+    return render_template('index.html', dropdown_options=dropdown_options)
 
 
 def dictionary_obtainer() -> dict[Any, str]:
@@ -181,7 +181,7 @@ def draw3dgraph() -> str:
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
+    app.run(debug=True)
     # app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 7899)))
     python_ta.check_all(config={
         'extra-imports': ['os', 'flask', 'graphclass', 'popularity_3d_graph', 'adi_spotify_playlist_gen'],
