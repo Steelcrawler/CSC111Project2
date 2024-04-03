@@ -1,4 +1,32 @@
-"""CSC111 Project 2"""
+"""CSC111 Project 2
+
+Error Explanations:
+[Line 285] This function has too many parameters (6, exceeding limit 5). You should try to reduce the complexity of the
+function by splitting up it, or combining related objects as a single one.
+Reasoning: These attributes are all necessary in the creation of a new song vertex, as those are all the attributes of a
+song vertex
+
+[Line 360] This function has too many parameters (12, exceeding limit 5). You should try to reduce the complexity of the
+function by splitting up it, or combining related objects as a single one.
+Reasoning: These attributes are all necessary in the creation of a new song vertex, as those are all the attributes of
+a song vertex
+
+[Line 393] This function has too many parameters (8, exceeding limit 5). You should try to reduce the complexity of the
+function by splitting up it, or combining related objects as a single one.
+Reasoning: These attributes are all necessary to reccomend a song, depending on what attributes the user inputs they
+all need to be there in the function
+
+[Line 360] This function has too many local variables (19, exceeding limit 15). You should try to reduce the complexity
+of the function by splitting up it, or combining related objects as a single one.
+Reasoning: All these attributes are necessary to create a new song vertex and add its neighbors
+
+[Line 380] This function has too many local variables (16, exceeding limit 15). You should try to reduce the complexity
+of the function by splitting up it, or combining related objects as a single one.
+Reasoning: The CSV file has a lot of data, and so there are a lot of local variables when getting that much information
+
+[Line 383] Used input/output function open
+Reasoning: Need to read the CSV file to get the data
+"""
 from __future__ import annotations
 from typing import Any, Optional
 import csv
@@ -58,7 +86,7 @@ class Graph:
             - item not in self._vertices
         """
         if item not in self._vertices:
-            self._vertices[item] = _Vertex(item, set())
+            self._vertices[item] = _Vertex(item)
 
     def add_edge(self, item1: Any, item2: Any) -> None:
         """Add an edge between the two vertices with the given items in this graph.
@@ -256,7 +284,7 @@ class SongVertex(_Vertex):
 
     def __init__(self, song_name: str, song_id: str, neighbours: set[_Vertex], artist: str,
                  track_popularity: str) -> None:
-        super().__init__(neighbours, set())
+        super().__init__(neighbours)
         self.song_name = song_name
         self.artist = artist
         self.song_id = song_id
@@ -288,7 +316,7 @@ class AttributeVertex(_Vertex):
     interval: str
 
     def __init__(self, attribute: str, interval: str, neighbours: set[_Vertex]) -> None:
-        super().__init__(neighbours, set())
+        super().__init__(neighbours)
         self.attribute = attribute
         self.interval = interval
 
@@ -344,7 +372,8 @@ class SongGraph(Graph):
             num_splits = self.key(attribute)
             range_str = get_value_range(song_attributes[attribute], (start, end), num_splits)
             if (attribute, range_str) not in self._vertices:
-                print(f"Attribute vertex {attribute} {range_str} not found")
+                pass
+                # print(f"Attribute vertex {attribute} {range_str} not found")
             else:
                 song_vertex.add_neighbor(self._vertices[(attribute, range_str)])
 
@@ -392,9 +421,7 @@ class SongGraph(Graph):
 
 if __name__ == '__main__':
     # my_graph = SongGraph()
-    # my_graph = SongGraph(stats=True)
     # my_graph.read_csv_data('cleaned_spotify_songs.csv')
-    # print(len(my_graph.reccomend_songs(instrumentalness='')))
     # print(len(my_graph.reccomend_songs(valence='0.1-0.2', danceability='0.1-0.2')))
 
     python_ta.check_all(config={
