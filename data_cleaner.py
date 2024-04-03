@@ -11,7 +11,8 @@ else:
     file_path = 'spotify_songs.csv'
     df = pd.read_csv(file_path)
     columns_to_keep = ['track_artist', 'track_name', 'track_id', 'valence', 'energy',
-                            'danceability', 'instrumentalness', 'tempo', 'speechiness', 'loudness', 'track_popularity']
+                       'danceability', 'instrumentalness', 'tempo',
+                       'speechiness', 'loudness', 'track_popularity']
     cleaned_df = df.dropna(subset=columns_to_keep)
     cleaned_df = cleaned_df[columns_to_keep]
     cleaned_df = cleaned_df.reset_index(drop=True)

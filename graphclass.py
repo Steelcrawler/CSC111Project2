@@ -24,13 +24,13 @@ class _Vertex:
     song_name: None
     neighbours: set[_Vertex]
 
-    def __init__(self, neighbours: set[_Vertex]) -> None:
+    def __init__(self, neighbours_set: set) -> None:
         """Initialize a new vertex with the given item and neighbours."""
         self.track_popularity = None
         self.attribute = None
         self.interval = None
         self.song_name = None
-        self.neighbours = neighbours
+        self.neighbours = neighbours_set
 
 
 class Graph:
@@ -110,13 +110,14 @@ def get_num_splits(attribute: str) -> int:
         return 4  # no dancing, some dancing, lots of dancing, hyperactive
     if attribute == 'instrumentalness':
         return 3  # no instruments, some instruments, all instruments
+    return 0
 
 
-def get_num_splits_stats(attribute) -> int:
+def get_num_splits_stats(attribute: str) -> int:
     """ Returns the number of splits for a given attribute for the stats graph. This
     value is always 10 to make the data easy to read.
     """
-    if type(attribute) == str:
+    if isinstance(attribute, str):
         return 10
     return 10
 
@@ -138,6 +139,7 @@ def get_attribute_range(attribute: str) -> tuple:
         return (0, 1)
     if attribute == 'instrumentalness':
         return (0, 1)
+    return (0, 0)
 
 
 def create_attribute_vertices(vertices: dict, attribute: str, attribute_interval: tuple, key: callable) -> None:
@@ -168,9 +170,9 @@ def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
     for i in range(num_splits):
         range_start = round(start + i * split_size, 2)
         range_end = round(start + (i + 1) * split_size, 2)
-        if range_start <= value < range_end:
+        if range_start <= value < range_end or (i == num_splits - 1 and value == end):
             return f"{range_start}-{range_end}"
-    return f"{end}-{end + split_size}"  # for the case when value equals to the end of total range
+    return ""  # if value is outside the range
 
 
 def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> int:
@@ -254,7 +256,7 @@ class SongVertex(_Vertex):
 
     def __init__(self, song_name: str, song_id: str, neighbours: set[_Vertex], artist: str,
                  track_popularity: str) -> None:
-        super().__init__(neighbours)
+        super().__init__(neighbours, set())
         self.song_name = song_name
         self.artist = artist
         self.song_id = song_id
@@ -286,7 +288,7 @@ class AttributeVertex(_Vertex):
     interval: str
 
     def __init__(self, attribute: str, interval: str, neighbours: set[_Vertex]) -> None:
-        super().__init__(neighbours)
+        super().__init__(neighbours, set())
         self.attribute = attribute
         self.interval = interval
 
@@ -349,7 +351,7 @@ class SongGraph(Graph):
     def read_csv_data(self, filename: str) -> None:
         """ Read a csv file of song data and add the songs to the graph
         """
-        with (open(filename, 'r') as file):
+        with open(filename, 'r') as file:
             reader = csv.reader(file)
             next(reader)  # Skip the header row
             for row in reader:
@@ -372,16 +374,16 @@ class SongGraph(Graph):
 
         for attribute, value in attributes:
             if value is not None:
-                print(f"Searching for attribute '{attribute}' with value '{value}'")
+                # print(f"Searching for attribute '{attribute}' with value '{value}'")
                 if vertices_set is None:
-                    print(f"Initializing vertices_set with attribute '{attribute}' and value '{value}'")
+                    # print(f"Initializing vertices_set with attribute '{attribute}' and value '{value}'")
                     vertices_set = self._vertices[(attribute, value)].neighbours
                 else:
-                    print(f"Intersecting vertices_set with attribute '{attribute}' and value '{value}'")
+                    # print(f"Intersecting vertices_set with attribute '{attribute}' and value '{value}'")
                     vertices_set = vertices_set.intersection(self._vertices[(attribute, value)].neighbours)
 
         if vertices_set is None:
-            print('no result')
+            # print('no result')
             return []
         else:
             reccomended_songs = [v.song_name for v in vertices_set]
@@ -389,9 +391,9 @@ class SongGraph(Graph):
 
 
 if __name__ == '__main__':
-    my_graph = SongGraph()
+    # my_graph = SongGraph()
     # my_graph = SongGraph(stats=True)
-    my_graph.read_csv_data('cleaned_spotify_songs.csv')
+    # my_graph.read_csv_data('cleaned_spotify_songs.csv')
     # print(len(my_graph.reccomend_songs(instrumentalness='')))
     # print(len(my_graph.reccomend_songs(valence='0.1-0.2', danceability='0.1-0.2')))
 
@@ -399,4 +401,5 @@ if __name__ == '__main__':
         'extra-imports': ['csv'],  # the names (strs) of imported modules
         'allowed-io': ['add_song', 'reccomend_songs', 'read_csv_data'],
         'max-line-length': 120
+
     })
