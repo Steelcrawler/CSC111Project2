@@ -1,14 +1,19 @@
-"""CSC111 Project 2"""
-# import math
+"""CSC111 Project 2
+
+Error Explanations:
+[Line 35/37] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
+the class in which it is defined.
+Reasoning: Need access to the vertices of the graph to get the songs associated with those values
+
+[Line 14] Imports from package plotly are not grouped
+Reasoning: Imports use different names for different modules
+
+"""
 import plotly.graph_objects as go
 import python_ta
-
-# import plotly.io as pio
 import plotly.offline as pyo
 import graphclass
 
-
-# if __name__ == '__main__':
 
 def get_data_for_graph() -> dict:
     """ Retrieve a song data from a CSV file and organize it for the visualization.
