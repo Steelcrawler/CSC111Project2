@@ -91,13 +91,6 @@ def dictionary_obtainer() -> dict[Any, str]:
     return obtained_dict  # Returns a dictionary where keys are variable labels and values are processed range strings
 
 
-# @app.route('/result', methods=['POST'])
-# def result():
-#     my_graph=graphclass._Song_Graph()
-#     my_graph.read_csv_data('cleaned_spotify_songs.csv')
-#     result_dictionary = dictionary_obtainer()
-#     return my_graph.reccomend_songs(**result_dictionary)
-
 @app.route('/result', methods=['POST'])
 def result() -> str:
     """ Render the result with recommended songs.
@@ -115,6 +108,9 @@ def result() -> str:
     if len(recommended_songs) > 20:
         recommended_songs = recommended_songs[:20] + ['and more!']
         recommended_songs = ', '.join(recommended_songs)
+
+    if not recommended_songs:
+        recommended_songs = 'Your search results were too specific. Please add less options and try again.'
 
     return render_template('result.html', recommended_songs=recommended_songs)
     # Return a rendered template 'result.html' with the recommended songs
