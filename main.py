@@ -1,36 +1,30 @@
 """CSC111 Project 2
 
 Error Explanations:
-[Line 40] Forbidden top-level code found on line 39
+[Line 34] Forbidden top-level code found on line 39
 Reasoning: Need this line of code to create the flask app
 
-[Line 41] Forbidden top-level code found on line 40
+[Line 35] Forbidden top-level code found on line 40
 Reasoning: Need this global variable to store the recommended songs throughout the different app routes
 
-[Line 40] Global variables must be constants or type aliases in CSC108/CSC148: a global variable 'app' is assigned to
+[Line 34] Global variables must be constants or type aliases in CSC108/CSC148: a global variable 'app' is assigned to
 on line 11
 Reasoning: Need this line of code to create the flask app
 
-[Line 41/111/129] Global variables must be constants or type aliases in CSC108/CSC148: the keyword 'global' is used
+[Line 35/105/123] Global variables must be constants or type aliases in CSC108/CSC148: the keyword 'global' is used
 Reasoning: Need this global variable to store the recommended songs throughout the different app routes
 
-[Line 59] Global variables must be constants or type aliases in CSC108/CSC148: a global variable 'dropdown_options'
-is assigned to on line 13
-Reasoning: Need these drop down options as they are what the user sees when they are selecting attributes
-
-[Line 40] Constant name "app" should be in UPPER_CASE_WITH_UNDERSCORES format. Constants should be all-uppercase words
+[Line 34] Constant name "app" should be in UPPER_CASE_WITH_UNDERSCORES format. Constants should be all-uppercase words
 with each word separated by an underscore. A single leading underscore can be used to denote a private constant.
 Reasoning: flask app documentation uses app in lower case
 
-[Line 41] Every global variable can be referenced from the module level, so using the 'global' keyword at the module
+[Line 35] Every global variable can be referenced from the module level, so using the 'global' keyword at the module
 level has no effect.
 Reasoning: Need to initialize global variable before use in the module level
 
 """
-
-
+import doctest
 from typing import Any
-
 import python_ta
 from flask import Flask, Response, redirect, render_template, request
 import graphclass
@@ -38,7 +32,7 @@ import popularity_3d_graph
 from spotify_playlist_generator import create_playlist_with_username
 
 app = Flask(__name__)
-global reccomended_songs_global
+global RECOMMENDED_SONGS_GLOBAL
 DROPDOWN_OPTIONS = {
     'dropdown_1': {'label': 'loudness', 'options': ['Whisper', 'Quiet', 'Medium', 'Loud', 'No Eardrums']},
     'dropdown_2': {'label': 'tempo', 'options': ['Snail', 'Slow', 'Medium', 'Fast', 'Cheetah']},
@@ -108,9 +102,9 @@ def result() -> str:
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     result_dictionary = dictionary_obtainer()
     recommended_songs = my_graph.reccomend_songs(**result_dictionary)
-    global reccomended_songs_global
+    global RECOMMENDED_SONGS_GLOBAL
     if len(recommended_songs) > 100:
-        reccomended_songs_global = recommended_songs[:100]
+        RECOMMENDED_SONGS_GLOBAL = recommended_songs[:100]
 
     if len(recommended_songs) > 20:
         recommended_songs = recommended_songs[:20] + ['and more!']
@@ -126,11 +120,8 @@ def create_playlist() -> Response:
     # Retrieve the Spotify username URL and recommended songs from the form
     spotify_username = request.form.get('spotify_username')
     spotify_username = spotify_username.split('/')[-1]
-    global reccomended_songs_global
-    # Perform actions to create the playlist in Spotify using the username and recommended songs
-    print(reccomended_songs_global[0])
-    # print(reccomended_songs_global[0], type(reccomended_songs_global[0]))
-    create_playlist_with_username(reccomended_songs_global, spotify_username)
+    global RECOMMENDED_SONGS_GLOBAL
+    create_playlist_with_username(RECOMMENDED_SONGS_GLOBAL, spotify_username)
 
     # Redirect the user to their Spotify profile where they can view the created playlist
     spotify_profile_url = f"https://open.spotify.com/user/{spotify_username}"
@@ -203,7 +194,7 @@ def draw3dgraph() -> str:
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 7899)))
+    doctest.testmod()
     python_ta.check_all(config={
         'extra-imports': ['os', 'flask', 'graphclass', 'popularity_3d_graph', 'adi_spotify_playlist_gen',
                           'spotify_playlist_generator'],
