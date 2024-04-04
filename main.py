@@ -61,30 +61,34 @@ def dictionary_obtainer() -> dict[Any, str]:
     selected_options = []
     dict_of_return = {}
     for i in range(1, 8):
-        dropdown_value = request.form.get(f'dropdown_{i}')
-        if dropdown_value:
-            selected_options.append(dropdown_value)
+        dropdown_value = request.form.get(
+            f'dropdown_{i}')  # Iterate over dropdown identifiers (as they are named dropdown_1 to dropdown_7)
+        if dropdown_value:  # Check if a dropdown value was selected
+            selected_options.append(
+                dropdown_value)  # Store the selected option in the dictionary with its dropdown identifier as the key
         dict_of_return[f'dropdown_{i}'] = dropdown_value
 
     def get_new(dictionary: dict[str, dict], dict_of_return_var: dict[str, str]) -> dict[Any, int]:
         """ Helper function to obtain the dictionary.
         """
         new_dict = {}
-        for val in dict_of_return_var:
-            row = dictionary[val]
+        for val in dict_of_return_var:  # Iterate over each variable in the provided dictionary from the user input.
+            row = dictionary[val]  # Get the smaller dictionary corresponding to the current variable
             lst = [i + 1 for i in range(len(row['options'])) if
                    row['options'][i] == dict_of_return_var[val]]
-            if lst:
-                new_dict[row['label']] = int(lst[0])
+            if lst:  # if list an option is found
+                new_dict[row['label']] = int(
+                    lst[0])  # Store the label of the variable and its corresponding index in the new dictionary.
         return new_dict
 
+    # Call the helper function to obtain the processed dictionary
     dict2 = get_new(DROPDOWN_OPTIONS, dict_of_return)
     obtained_dict = {}
     for var in dict2:
         obtained_dict[var] = graphclass.get_range_str_from_index(dict2[var], graphclass.get_attribute_range(var),
                                                                  graphclass.get_num_splits(var))
 
-    return obtained_dict
+    return obtained_dict  # Returns a dictionary where keys are variable labels and values are processed range strings
 
 
 # @app.route('/result', methods=['POST'])
@@ -98,10 +102,12 @@ def dictionary_obtainer() -> dict[Any, str]:
 def result() -> str:
     """ Render the result with recommended songs.
     """
-    my_graph = graphclass.SongGraph()
+    my_graph = graphclass.SongGraph()  # Create an instance of the SongGraph class
     my_graph.read_csv_data('cleaned_spotify_songs.csv')
     result_dictionary = dictionary_obtainer()
+    # Obtain a dictionary of variables mapped to the ranges for recommending songs
     recommended_songs = my_graph.reccomend_songs(**result_dictionary)
+    # Get recommended songs from the SongGraph instance based on the obtained dictionary
     global RECOMMENDED_SONGS_GLOBAL
     if len(recommended_songs) > 100:
         RECOMMENDED_SONGS_GLOBAL = recommended_songs[:100]
@@ -111,6 +117,7 @@ def result() -> str:
         recommended_songs = ', '.join(recommended_songs)
 
     return render_template('result.html', recommended_songs=recommended_songs)
+    # Return a rendered template 'result.html' with the recommended songs
 
 
 @app.route('/create_playlist', methods=['POST'])
