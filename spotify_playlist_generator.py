@@ -6,7 +6,7 @@ from spotipy import util
 
 
 def create_playlist(songs: list) -> None:
-    """ Create a playlist for a given user and add songs to it on Spotify.
+    """ Create a playlist for a user based on input from the terminal on Spotify.
 
     Preconditions:
         - songs != []
@@ -19,24 +19,24 @@ def create_playlist(songs: list) -> None:
     username = input('Enter the link to your Spotify profile (Click on your icon on the top right, '
                      'click profile, and copy paste the link here):')
     username = username.split('/')[-1]
-    token = util.prompt_for_user_token(
+    token = util.prompt_for_user_token(  # get user's credentials
         username=username,
         scope='playlist-modify-private playlist-modify-public',
         client_id=client_id,
         client_secret=client_secret,
         redirect_uri="http://localhost:8888/callback"
     )
-    spotify = spotipy.Spotify(auth=token)
+    spotify = spotipy.Spotify(auth=token)  # authenticate with the user's credentials
     playlist_name = 'Reccomended Playlist For You!'
     playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False,
                                             description='Playlist generated using CSC111 project 2!')
     for song in songs:
-        results = spotify.search(q='track:' + song, type='track', limit=1)
+        results = spotify.search(q='track:' + song, type='track', limit=1)  # seaches spotify for the song
         items = results['tracks']['items']
         if len(items) > 0:
             track = items[0]
             track_id = track['id']
-            spotify.playlist_add_items(playlist['id'], [track_id])
+            spotify.playlist_add_items(playlist['id'], [track_id])  # adds song to playlist if found
 
 
 def create_playlist_with_username(songs: list, username: str) -> None:
@@ -50,25 +50,26 @@ def create_playlist_with_username(songs: list, username: str) -> None:
     client_id = 'abacd94498c945af91633a3e85ed1fa1'
     client_secret = '8f38ae574af4484c91c0e95f412c4ffe'
 
-    token = util.prompt_for_user_token(
+    token = util.prompt_for_user_token(  # get user credentials
         username=username,
         scope='playlist-modify-private playlist-modify-public',
         client_id=client_id,
         client_secret=client_secret,
         redirect_uri="http://localhost:8888/callback"
     )
-    spotify = spotipy.Spotify(auth=token)
+    spotify = spotipy.Spotify(auth=token)  # authenticate with the user's credentials
 
     playlist_name = 'Reccomended Playlist For You!'
-    playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False, description='test playlist'
-                                            )
+    # creates the playlist
+    playlist = spotify.user_playlist_create(user=username, name=playlist_name, public=False,
+                                            description='Playlist generated using CSC111 project 2!')
     for song in songs:
-        results = spotify.search(q='track:' + song, type='track', limit=1)
+        results = spotify.search(q='track:' + song, type='track', limit=1)  # seaches for songs
         items = results['tracks']['items']
         if len(items) > 0:
             track = items[0]
             track_id = track['id']
-            spotify.playlist_add_items(playlist['id'], [track_id])
+            spotify.playlist_add_items(playlist['id'], [track_id])  # adds it to playlist if found
 
 
 if __name__ == '__main__':
