@@ -1,24 +1,25 @@
 """CSC111 Project 2
 
 Error Explanations:
-[Line 32] Disallowed name "bar". You should give your variables meaningful rather than generic names.
+[Line 33] Disallowed name "bar". You should give your variables meaningful rather than generic names.
 Reasoning: This is literally the name for each bar in the bar graph
 
-[Line 34] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
+[Line 35] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
 the class in which it is defined.
 Reasoning: Access to vertices of the graph object to generate a visual graph
 
-[Line 45] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
+[Line 46] Since _vertices starts with an underscore, it is considered private and so should not be accessed outside
 the class in which it is defined.
 Reasoning: Access to vertices of the graph object to generate a visual graph
-
 """
+import doctest
 import python_ta
 import matplotlib.pyplot as plt
 import graphclass
 
 
 if __name__ == '__main__':
+    doctest.testmod()
     python_ta.check_all(config={
         'extra-imports': ['graphclass', 'matplotlib.pyplot'],
         'allowed-io': ['create_playlist'],

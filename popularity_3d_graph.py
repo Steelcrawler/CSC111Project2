@@ -7,8 +7,8 @@ Reasoning: Need access to the vertices of the graph to get the songs associated 
 
 [Line 14] Imports from package plotly are not grouped
 Reasoning: Imports use different names for different modules
-
 """
+import doctest
 import plotly.graph_objects as go
 import python_ta
 import plotly.offline as pyo
@@ -169,6 +169,7 @@ def generate_div_graph() -> str:
 
 
 if __name__ == '__main__':
+    doctest.testmod()
     python_ta.check_all(config={
         'extra-imports': ['plotly.graph_objects', 'graphclass', 'math', 'plotly.io', 'plotly.offline'],
         'allowed-io': ['add_song', 'reccomend_songs', 'read_csv_data'],

@@ -1,8 +1,10 @@
 """CSC111 Project 2"""
+import doctest
 import pandas as pd
 import python_ta
 
 if __name__ == '__main__':
+    doctest.testmod()
     python_ta.check_all(config={
         'extra-imports': ['pandas'],
         'max-line-length': 120

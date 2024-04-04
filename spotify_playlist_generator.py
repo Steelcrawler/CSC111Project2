@@ -1,4 +1,5 @@
 """CSC111 Project 2"""
+import doctest
 import python_ta
 import spotipy
 from spotipy import util
@@ -71,6 +72,7 @@ def create_playlist_with_username(songs: list, username: str) -> None:
 
 
 if __name__ == '__main__':
+    doctest.testmod()
     python_ta.check_all(config={
         'extra-imports': ['spotipy', 'spotipy.util', 'spotipy.oauth2'],
         'allowed-io': ['create_playlist'],
