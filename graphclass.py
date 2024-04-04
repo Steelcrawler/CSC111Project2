@@ -26,12 +26,12 @@ Reasoning: The CSV file has a lot of data, and so there are a lot of local varia
 
 [Line 383] Used input/output function open
 Reasoning: Need to read the CSV file to get the data
+
 """
 from __future__ import annotations
 from typing import Any, Optional
 import csv
-# import math
-
+import doctest
 import python_ta
 
 
@@ -422,8 +422,7 @@ class SongGraph(Graph):
 if __name__ == '__main__':
     # my_graph = SongGraph()
     # my_graph.read_csv_data('cleaned_spotify_songs.csv')
-    # print(len(my_graph.reccomend_songs(valence='0.1-0.2', danceability='0.1-0.2')))
-
+    doctest.testmod()
     python_ta.check_all(config={
         'extra-imports': ['csv'],  # the names (strs) of imported modules
         'allowed-io': ['add_song', 'reccomend_songs', 'read_csv_data'],
