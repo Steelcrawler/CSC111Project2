@@ -173,15 +173,15 @@ def get_attribute_range(attribute: str) -> tuple:
 def create_attribute_vertices(vertices: dict, attribute: str, attribute_interval: tuple, key: callable) -> None:
     """ Create a list of attribute vertices for a given attribute
     """
-    num_splits = key(attribute)
+    num_splits = key(attribute)  # gets the number of attributes from the function passed in
     start = attribute_interval[0]
     end = attribute_interval[1]
     interval_size = (end - start) / num_splits
     for i in range(num_splits):
         interval_start = round(start + i * interval_size, 2)
-        interval_end = round(start + (i + 1) * interval_size, 2)
+        interval_end = round(start + (i + 1) * interval_size, 2)  # calculates the bounds for the interval string
         interval = f"{interval_start}-{interval_end}"
-        vertices[(attribute, interval)] = AttributeVertex(attribute, interval, set())
+        vertices[(attribute, interval)] = AttributeVertex(attribute, interval, set())  # adds attribute vertex to dict
 
 
 def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
@@ -195,10 +195,11 @@ def get_value_range(value: float, total_range: tuple, num_splits: int) -> str:
     """
     start, end = total_range
     split_size = (end - start) / num_splits
-    for i in range(num_splits):
+    for i in range(num_splits):  # checks each possible attribute range
         range_start = round(start + i * split_size, 2)
         range_end = round(start + (i + 1) * split_size, 2)
-        if range_start <= value < range_end or (i == num_splits - 1 and value == end):
+        if range_start <= value < range_end or (
+                i == num_splits - 1 and value == end):  # determines where value is in ranges
             return f"{range_start}-{range_end}"
     return ""  # if value is outside the range
 
@@ -227,10 +228,10 @@ def reverse_value_range(range_str: str, total_range: tuple, num_splits: int) -> 
     if range_str.startswith('-'):
         range_start = float(range_str[1:].split('-', 1)[0]) * -1
     else:
-        range_start = float(range_str.split('-', 1)[0])
+        range_start = float(range_str.split('-', 1)[0])  # gets the start of the range
     split_size = (end - start) / num_splits
-    i = int(round((range_start - start) / split_size, 0))
-    return i + 1
+    i = int(round((range_start - start) / split_size, 0))  # calculates the index of the range
+    return i + 1  # returns the index
 
 
 def get_range_str_from_index(i: int, total_range: tuple, num_splits: int) -> str:
@@ -327,7 +328,7 @@ class SongGraph(Graph):
     Instance Attributes:
         - stats: A boolean indicating whether to use stats for the attribute splits.
         - _vertices: A dictionary containing attribute vertices as keys and their corresponding vertex objects.
-        - attributes: A dictionary containing attribute ranges for general song attributes.
+        - attributes: A dictionary containing the whole attribute range for song attributes.
         - key: A callable function use to determine the number of splits.
 
     Representation Invariants:
@@ -347,15 +348,16 @@ class SongGraph(Graph):
                            'tempo': get_attribute_range('tempo'),
                            'speechiness': get_attribute_range('speechiness')}
         if stats:
-            self.key = get_num_splits_stats
+            self.key = get_num_splits_stats  # determines the key for the number of splits (10 for graph generation)
         else:
-            self.key = get_num_splits
+            self.key = get_num_splits  # Variable splits for normal use
         if stats:
             for attribute in self.attributes:
                 create_attribute_vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits_stats)
         else:
             for attribute in self.attributes:
                 create_attribute_vertices(self._vertices, attribute, self.attributes[attribute], get_num_splits)
+        # crates the attribute vertices in the graph
 
     def add_song(self, track_name: str, track_id: str, valence: float, energy: float, danceability: float,
                  instrumentalness: float, tempo: float, speechiness: float, loudness: float, artist: str,
@@ -371,10 +373,10 @@ class SongGraph(Graph):
             start, end = self.attributes[attribute]
             num_splits = self.key(attribute)
             range_str = get_value_range(song_attributes[attribute], (start, end), num_splits)
-            if (attribute, range_str) not in self._vertices:
+            if (attribute, range_str) not in self._vertices:  # checks if the attribute and range are not in vertices
                 pass
                 # print(f"Attribute vertex {attribute} {range_str} not found")
-            else:
+            else:  # adds the song as a neighbor to its corresponding attribute range
                 song_vertex.add_neighbor(self._vertices[(attribute, range_str)])
 
     def read_csv_data(self, filename: str) -> None:
@@ -394,28 +396,27 @@ class SongGraph(Graph):
                         danceability: Optional[str] = None, loudness: Optional[str] = None,
                         instrumentalness: Optional[str] = None, tempo: Optional[str] = None,
                         speechiness: Optional[str] = None) -> list:
-        """ Return a list of songs that are similar to the given attributes
+        """ Return a list of songs that are similar to the given attributes and their corresponding ranges
         """
         vertices_set = None
         attributes = {('valence', valence), ('energy', energy), ('danceability', danceability),
                       ('loudness', loudness), ('instrumentalness', instrumentalness),
-                      ('tempo', tempo), ('speechiness', speechiness)}
+                      ('tempo', tempo), ('speechiness', speechiness)}  # set that stores attributes and their ranges
 
         for attribute, value in attributes:
             if value is not None:
                 # print(f"Searching for attribute '{attribute}' with value '{value}'")
-                if vertices_set is None:
+                if vertices_set is None:  # creating vertices_set if this is the first attribute with a value
                     # print(f"Initializing vertices_set with attribute '{attribute}' and value '{value}'")
                     vertices_set = self._vertices[(attribute, value)].neighbours
-                else:
+                else:  # finds the intersection of the remainiing songs
                     # print(f"Intersecting vertices_set with attribute '{attribute}' and value '{value}'")
                     vertices_set = vertices_set.intersection(self._vertices[(attribute, value)].neighbours)
 
-        if vertices_set is None:
-            # print('no result')
-            return []
+        if vertices_set is None:  # then no songs were found
+            return ['No songs were found']
         else:
-            reccomended_songs = [v.song_name for v in vertices_set]
+            reccomended_songs = [v.song_name for v in vertices_set]  # gets a list of songs names
         return reccomended_songs
 
 
