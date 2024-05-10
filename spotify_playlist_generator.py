@@ -3,6 +3,10 @@ import doctest
 import python_ta
 import spotipy
 from spotipy import util
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 def create_playlist(songs: list) -> None:
@@ -12,8 +16,16 @@ def create_playlist(songs: list) -> None:
         - songs != []
         - all(len(song) > 0 for song in songs)
     """
-    client_id = 'abacd94498c945af91633a3e85ed1fa1'
-    client_secret = '8f38ae574af4484c91c0e95f412c4ffe'
+    client_id = os.getenv('CLIENT_ID')
+    client_secret = os.getenv('CLIENT_SECRET')
+    # To use this yourself, do the following:
+    # 1. Create a .env file in the same directory as this file.
+    # 2. Add the following lines to the .gitignore file:
+    #    ```
+    #    client_id = 'your_client_id'
+    #    client_secret = 'your_client_secret'
+    #    ```
+    # 3. Replace 'your_client_id' and 'your_client_secret' with your own client id and secret.
     # redirect_uri = 'http://localhost:8888/callback'
 
     username = input('Enter the link to your Spotify profile (Click on your icon on the top right, '
